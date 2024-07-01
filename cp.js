@@ -1,0 +1,239 @@
+const { OPCUAClient, AttributeIds, DataType } = require("node-opcua-client");
+const { Kafka } = require('kafkajs');
+
+const kafka = new Kafka({
+  clientId: 'my-kafka-app',
+  brokers: ['10.10.10.52:9092'] // Kafka 브로커의 주소
+});
+
+const producer = kafka.producer();
+
+// Your OPC UA server endpoint
+const endpointUrl = "opc.tcp://10.10.10.91:4840";
+
+// The nodeId of the variable you want to read
+const nodeId_CPRead_LotNo = "ns=6;s=::CPRead:ReadData.LotNo";
+const nodeId_CPRead_ETC = "ns=6;s=::CPRead:ReadData.ETC";
+
+const nodeId_CPRead_UnWinder_TSSV = "ns=6;s=::CPRead:ReadData.UnWinder.TSSV";
+const nodeId_CPRead_UnWinder_TSPV = "ns=6;s=::CPRead:ReadData.UnWinder.TSPV";
+const nodeId_CPRead_UnWinder_Diameter = "ns=6;s=::CPRead:ReadData.UnWinder.Diameter";
+
+const nodeId_CPRead_Press_RollTSV = "ns=6;s=::CPRead:ReadData.Press.RollTSV";
+const nodeId_CPRead_Press_RollTPV = "ns=6;s=::CPRead:ReadData.Press.RollTPV";
+const nodeId_CPRead_Press_SPOS = "ns=6;s=::CPRead:ReadData.Press.SPOS";
+const nodeId_CPRead_Press_SPDS = "ns=6;s=::CPRead:ReadData.Press.SPDS";
+const nodeId_CPRead_Press_HDHOS = "ns=6;s=::CPRead:ReadData.Press.HDHOS";
+const nodeId_CPRead_Press_HDHDS = "ns=6;s=::CPRead:ReadData.Press.HDHDS";
+const nodeId_CPRead_Press_HDLOS = "ns=6;s=::CPRead:ReadData.Press.HDLOS";
+const nodeId_CPRead_Press_HDLDS = "ns=6;s=::CPRead:ReadData.Press.HDLDS";
+const nodeId_CPRead_Press_FP = "ns=6;s=::CPRead:ReadData.Press.FP";
+const nodeId_CPRead_Press_Speed = "ns=6;s=::CPRead:ReadData.Press.Speed";
+const nodeId_CPRead_Press_GDDS = "ns=6;s=::CPRead:ReadData.Press.GDDS";
+
+const nodeId_CPRead_OutFeed_TSDS = "ns=6;s=::CPRead:ReadData.OutFeed.TSDS";
+const nodeId_CPRead_OutFeed_TSOS = "ns=6;s=::CPRead:ReadData.OutFeed.TSOS";
+
+const nodeId_CPRead_ReWinder_TSSV = "ns=6;s=::CPRead:ReadData.ReWinder.TSSV";
+const nodeId_CPRead_ReWinder_TSPV = "ns=6;s=::CPRead:ReadData.ReWinder.TSPV";
+const nodeId_CPRead_ReWinder_Diameter = "ns=6;s=::CPRead:ReadData.ReWinder.Diameter";
+
+const nodeId_CPRead_active = "ns=6;s=::CPRead:ReadBlock_0.Active";
+
+async function collectAndSendData(session) {
+    try {
+        const Value_CP_LotNo = await session.read({ nodeId: nodeId_CPRead_LotNo, attributeId: AttributeIds.Value });
+        const Value_CP_ETC = await session.read({ nodeId: nodeId_CPRead_ETC, attributeId: AttributeIds.Value });
+    
+        const Value_CP_UnWinder_TSSV = await session.read({ nodeId: nodeId_CPRead_UnWinder_TSSV, attributeId: AttributeIds.Value });
+        const Value_CP_UnWinder_TSPV = await session.read({ nodeId: nodeId_CPRead_UnWinder_TSPV, attributeId: AttributeIds.Value });
+        const Value_CP_UnWinder_Diameter = await session.read({ nodeId: nodeId_CPRead_UnWinder_Diameter, attributeId: AttributeIds.Value });
+    
+        const Value_CP_Press_RollTSV = await session.read({ nodeId: nodeId_CPRead_Press_RollTSV, attributeId: AttributeIds.Value });
+        const Value_CP_Press_RollTPV = await session.read({ nodeId: nodeId_CPRead_Press_RollTPV, attributeId: AttributeIds.Value });
+        const Value_CP_Press_SPOS = await session.read({ nodeId: nodeId_CPRead_Press_SPOS, attributeId: AttributeIds.Value });
+        const Value_CP_Press_SPDS = await session.read({ nodeId: nodeId_CPRead_Press_SPDS, attributeId: AttributeIds.Value });
+        const Value_CP_Press_HDHOS = await session.read({ nodeId: nodeId_CPRead_Press_HDHOS, attributeId: AttributeIds.Value });
+        const Value_CP_Press_HDHDS = await session.read({ nodeId: nodeId_CPRead_Press_HDHDS, attributeId: AttributeIds.Value });
+        const Value_CP_Press_HDLOS = await session.read({ nodeId: nodeId_CPRead_Press_HDLOS, attributeId: AttributeIds.Value });
+        const Value_CP_Press_HDLDS = await session.read({ nodeId: nodeId_CPRead_Press_HDLDS, attributeId: AttributeIds.Value });
+        const Value_CP_Press_FP = await session.read({ nodeId: nodeId_CPRead_Press_FP, attributeId: AttributeIds.Value });
+        const Value_CP_Press_Speed = await session.read({ nodeId: nodeId_CPRead_Press_Speed, attributeId: AttributeIds.Value });
+        const Value_CP_Press_GDDS = await session.read({ nodeId: nodeId_CPRead_Press_GDDS, attributeId: AttributeIds.Value });
+        
+        const Value_CP_OutFeed_TSDS = await session.read({ nodeId: nodeId_CPRead_OutFeed_TSDS, attributeId: AttributeIds.Value });
+        const Value_CP_OutFeed_TSOS = await session.read({ nodeId: nodeId_CPRead_OutFeed_TSOS, attributeId: AttributeIds.Value });
+        
+        const Value_CP_ReWinder_TSSV = await session.read({ nodeId: nodeId_CPRead_ReWinder_TSSV, attributeId: AttributeIds.Value });
+        const Value_CP_ReWinder_TSPV = await session.read({ nodeId: nodeId_CPRead_ReWinder_TSPV, attributeId: AttributeIds.Value });
+        const Value_CP_ReWinder_Diameter = await session.read({ nodeId: nodeId_CPRead_ReWinder_Diameter, attributeId: AttributeIds.Value });
+    
+	const Value_CP_active = await session.read({ nodeId: nodeId_CPRead_active, attributeId: AttributeIds.Value });
+
+        const String_LotNo = String.fromCharCode(...Value_CP_LotNo.value.value.filter(code => code !== 0 && code !== 1));
+        const String_ETC = String.fromCharCode(...Value_CP_ETC.value.value.filter(code => code !== 0));
+
+        let json_CP_UnWinder = {}
+        let topic_CP_UnWinder = 'sfs.machine.press.c.uw1';
+        json_CP_UnWinder.LotNo = String_LotNo;
+        json_CP_UnWinder.ETC = String_ETC;
+        json_CP_UnWinder.TSSV = {}
+        json_CP_UnWinder.TSSV.unit = "N";
+        json_CP_UnWinder.TSSV.min = 40;
+        json_CP_UnWinder.TSSV.max = 300;
+        json_CP_UnWinder.TSSV.value = Value_CP_UnWinder_TSSV.value.value;
+        json_CP_UnWinder.TSPV = {}
+        json_CP_UnWinder.TSPV.unit = "N";
+        json_CP_UnWinder.TSPV.min = 40;
+        json_CP_UnWinder.TSPV.max = 300;
+        json_CP_UnWinder.TSPV.value = Value_CP_UnWinder_TSPV.value.value;
+        json_CP_UnWinder.Diameter = {};
+        json_CP_UnWinder.Diameter.unit = 'mm';
+        json_CP_UnWinder.Diameter.min = 96.6;
+        json_CP_UnWinder.Diameter.max = 500.0;
+        json_CP_UnWinder.Diameter.value = Value_CP_UnWinder_Diameter.value.value;
+
+        let json_CP_Press = {}
+        let topic_CP_Press = 'sfs.machine.press.c.press1';
+        json_CP_Press.LotNo = String_LotNo;
+        json_CP_Press.ETC = String_ETC;
+        json_CP_Press.RollTSV = {};
+        json_CP_Press.RollTSV.unit = "°C";
+        json_CP_Press.RollTSV.min = 0;
+        json_CP_Press.RollTSV.max = 200;
+        json_CP_Press.RollTSV.value = (Value_CP_Press_RollTSV.value.value * 0.1).toFixed(2) * 1;
+        json_CP_Press.RollTPV = {};
+        json_CP_Press.RollTPV.unit = "°C";
+        json_CP_Press.RollTPV.min = 0;
+        json_CP_Press.RollTPV.max = 200;
+        json_CP_Press.RollTPV.value = (Value_CP_Press_RollTPV.value.value * 0.1).toFixed(2) * 1;
+        json_CP_Press.SPOS = {};
+        json_CP_Press.SPOS.unit = "bar";
+        json_CP_Press.SPOS.min = 0;
+        json_CP_Press.SPOS.max = 200;
+        json_CP_Press.SPOS.value = Value_CP_Press_SPOS.value.value;
+        json_CP_Press.SPDS = {};
+        json_CP_Press.SPDS.unit = "bar";
+        json_CP_Press.SPDS.min = 0;
+        json_CP_Press.SPDS.max = 200;
+        json_CP_Press.SPDS.value = Value_CP_Press_SPDS.value.value;
+        json_CP_Press.HDHOS = {};
+        json_CP_Press.HDHOS.unit = "bar";
+        json_CP_Press.HDHOS.min = 0;
+        json_CP_Press.HDHOS.max = 200;
+        json_CP_Press.HDHOS.value = Value_CP_Press_HDHOS.value.value;
+        json_CP_Press.HDHDS = {};
+        json_CP_Press.HDHDS.unit = "bar";
+        json_CP_Press.HDHDS.min = 0;
+        json_CP_Press.HDHDS.max = 200;
+        json_CP_Press.HDHDS.value = Value_CP_Press_HDHDS.value.value;
+        json_CP_Press.HDLOS = {};
+        json_CP_Press.HDLOS.unit = "bar";
+        json_CP_Press.HDLOS.min = 0;
+        json_CP_Press.HDLOS.max = 200;
+        json_CP_Press.HDLOS.value = Value_CP_Press_HDLOS.value.value;
+        json_CP_Press.HDLDS = {};
+        json_CP_Press.HDLDS.unit = "bar";
+        json_CP_Press.HDLDS.min = 0;
+        json_CP_Press.HDLDS.max = 200;
+        json_CP_Press.HDLDS.value = Value_CP_Press_HDLDS.value.value;
+        json_CP_Press.FP = {};
+        json_CP_Press.FP.unit = "Ton/cm";
+        json_CP_Press.FP.min = 0;
+        json_CP_Press.FP.max = 100;
+        json_CP_Press.FP.value = Value_CP_Press_FP.value.value;
+        json_CP_Press.Speed = {};
+        json_CP_Press.Speed.unit = "m/min";
+        json_CP_Press.Speed.min = 0;
+        json_CP_Press.Speed.max = 50.0;
+        json_CP_Press.Speed.value = (Value_CP_Press_Speed.value.value * 0.1).toFixed(2) * 1;
+        json_CP_Press.GDOS = {};
+        json_CP_Press.GDOS.unit = "mm";
+        json_CP_Press.GDOS.min = 45.000;
+        json_CP_Press.GDOS.max = 150.000;
+        json_CP_Press.GDOS.value = (Value_CP_Press_GDDS.value.value * 0.001).toFixed(3) * 1;
+
+        let json_CP_OutFeed = {}
+        let topic_CP_OutFeed = 'sfs.machine.press.c.of1';
+        json_CP_OutFeed.LotNo = String_LotNo;
+        json_CP_OutFeed.ETC = String_ETC;
+        json_CP_OutFeed.TSDS = {};
+        json_CP_OutFeed.TSDS.unit = "μm";
+        json_CP_OutFeed.TSDS.min = 0;
+        json_CP_OutFeed.TSDS.max = 250.0;
+        json_CP_OutFeed.TSDS.value = (Value_CP_OutFeed_TSDS.value.value * 0.1).toFixed(2) * 1;
+        json_CP_OutFeed.TSOS = {};
+        json_CP_OutFeed.TSOS.unit = "μm";
+        json_CP_OutFeed.TSOS.min = 0;
+        json_CP_OutFeed.TSOS.max = 250.0;
+        json_CP_OutFeed.TSOS.value = (Value_CP_OutFeed_TSOS.value.value * 0.1).toFixed(2) * 1;
+
+        let json_CP_ReWinder = {}
+        let topic_CP_ReWinder = 'sfs.machine.press.c.rw1';
+        json_CP_ReWinder.LotNo = String_LotNo;
+        json_CP_ReWinder.ETC = String_ETC;
+        json_CP_ReWinder.TSSV = {};
+        json_CP_ReWinder.TSSV.unit = 'N';
+        json_CP_ReWinder.TSSV.min = 40;
+        json_CP_ReWinder.TSSV.max = 300;
+        json_CP_ReWinder.TSSV.value = Value_CP_ReWinder_TSSV.value.value;
+        json_CP_ReWinder.TSPV = {};
+        json_CP_ReWinder.TSPV.unit = 'N';
+        json_CP_ReWinder.TSPV.min = 40;
+        json_CP_ReWinder.TSPV.max = 300;
+        json_CP_ReWinder.TSPV.value = Value_CP_ReWinder_TSPV.value.value;
+        json_CP_ReWinder.Diameter = {};
+        json_CP_ReWinder.Diameter.unit = 'N';
+        json_CP_ReWinder.Diameter.min = 96.6;
+        json_CP_ReWinder.Diameter.max = 500.0;
+        json_CP_ReWinder.Diameter.value = Value_CP_ReWinder_Diameter.value.value;
+	json_CP_ReWinder.Active = Value_CP_active.value.value;
+	
+        await sendKafkaMessage(topic_CP_UnWinder, json_CP_UnWinder);
+        await sendKafkaMessage(topic_CP_Press, json_CP_Press);
+        await sendKafkaMessage(topic_CP_OutFeed, json_CP_OutFeed);
+        await sendKafkaMessage(topic_CP_ReWinder, json_CP_ReWinder);
+        
+    } catch (error) {
+        console.error('데이터 수집 및 전송 중 오류 발생:', error);
+    }
+}
+
+
+async function main() {
+    await producer.connect();
+    const client = OPCUAClient.create({ endpointMustExist: false });
+    try{
+        await client.connect(endpointUrl);
+        console.log("Connected to the OPC UA server at", endpointUrl);
+
+        const session = await client.createSession();
+        console.log("Session created");
+
+        await collectAndSendData(session);
+
+        const run = async () => {
+            while (true) {
+                await collectAndSendData(session);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
+            }
+        };
+        run().catch(console.error);
+    } catch (error) {
+        console.error("Initialization failed:", error);
+        await producer.disconnect();
+        await client.disconnect();
+    }
+}
+
+async function sendKafkaMessage(topic, messages) {
+
+    await producer.send({
+        topic: topic, // 전송할 토픽
+        messages: [
+        { value: JSON.stringify(messages) } // 전송할 메시지
+        ],
+    });
+}
+
+main();
