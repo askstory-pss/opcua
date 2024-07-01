@@ -1,6 +1,8 @@
 const { OPCUAClient, AttributeIds, DataType } = require("node-opcua-client");
 const { Kafka } = require('kafkajs');
 const axios = require('axios');
+const redis = require('redis');
+const client_redis = redis.createClient();
 
 const kafka = new Kafka({
     clientId: 'my-kafka-app',
@@ -177,15 +179,64 @@ async function writeNode(session, nodeId, dataType, value) {
     }
 }
 
-async function bcrCheck(session, BCR, REQ, CODE, REP, polarity, process){
+//////////////////// REDIS_KEY ////////////////////
+// C_MMBCR
+// A_MMBCR
+// C_BINBCR
+// A_CMCBCR
+// C_DP1BCR
+// C_DP2BCR
+// C_DPLBCR
+// A_DP1BCR
+// A_DP2BCR
+// A_DPSBCR
+///////////////////////////////////////////////////
+
+async function writeRedis(key, redis_value){
+    await client_redis.connect();
+    let get_data = await client_redis.get(key);
+    try{
+        let get_json = JSON.parse(get_data);
+        if(get_json.bcr_list?.length >= 1){
+            redis_value.id = get_json.bcr_list.length + 1;
+            get_json.bcr_list.push(redis_value);
+            await client_redis.set(key, JSON.stringify(get_json));
+            await client_redis.disconnect();
+        }else{
+            let get_json = {
+                bcr_list : []
+            };
+            redis_value.id = 1
+            get_json.bcr_list.push(redis_value);
+            await client_redis.set(key, JSON.stringify(get_json));
+            await client_redis.disconnect();
+        }
+    }catch{
+        let get_json = {
+            bcr_list : []
+        };
+        redis_value.id = 1
+        get_json.bcr_list.push(redis_value);
+        await client_redis.set(key, JSON.stringify(get_json));
+        await client_redis.disconnect();
+    }
+}
+
+async function bcrCheck(session, BCR, REQ, CODE, REP, polarity, process, key){
     try {
         if(REQ.value.value === 1){
             //let resultValue = await bcrAvail(polarity, process, BCR.value.value);
-	    let resultValue = true;
+            let resultValue = true;
             const codeValue = resultValue === true ? 1 : 0;
             await writeNode(session, CODE, DataType.Int16, codeValue);
             if (resultValue === true) {
                 await writeNode(session, REP, DataType.Byte, 1);
+                let code_value = await session.read({ nodeId: CODE, attributeId: AttributeIds.Value });
+                let redis_value = {
+                    "BCR" : BCR,
+                    "CODE" : code_value
+                }
+                await writeRedis(key, redis_value);
             }
         }else{
             await writeNode(session, REP, DataType.Byte, 0);
@@ -199,43 +250,43 @@ async function collectAndSendData(session) {
     try {
         const Value_CMS_MMBCR_BCR = await session.read({ nodeId: nodeId_CMSRead_MMBCR_BCR, attributeId: AttributeIds.Value });
         const Value_CMS_MMBCR_REQ = await session.read({ nodeId: nodeId_CMSRead_MMBCR_REQ, attributeId: AttributeIds.Value });
-        await bcrCheck(session, Value_CMS_MMBCR_BCR, Value_CMS_MMBCR_REQ, nodeId_CMSWrite_MMBCR_CODE, nodeId_CMSWrite_MMBCR_REP, 'cathode', 'mixing800');
+        await bcrCheck(session, Value_CMS_MMBCR_BCR, Value_CMS_MMBCR_REQ, nodeId_CMSWrite_MMBCR_CODE, nodeId_CMSWrite_MMBCR_REP, 'cathode', 'mixing800', 'C_MMBCR');
 
         const Value_AMS_MMBCR_BCR = await session.read({ nodeId: nodeId_AMSRead_MMBCR_BCR, attributeId: AttributeIds.Value });
         const Value_AMS_MMBCR_REQ = await session.read({ nodeId: nodeId_AMSRead_MMBCR_REQ, attributeId: AttributeIds.Value });
-        await bcrCheck(session, Value_AMS_MMBCR_BCR, Value_AMS_MMBCR_REQ, nodeId_AMSWrite_MMBCR_CODE, nodeId_AMSWrite_MMBCR_REP, 'anode', 'mixing500');
+        await bcrCheck(session, Value_AMS_MMBCR_BCR, Value_AMS_MMBCR_REQ, nodeId_AMSWrite_MMBCR_CODE, nodeId_AMSWrite_MMBCR_REP, 'anode', 'mixing500', 'A_MMBCR');
 
         const Value_CBC_BINBCR_BCR = await session.read({ nodeId: nodeId_CBCRead_BINBCR_BCR, attributeId: AttributeIds.Value });
         const Value_CBC_BINBCR_REQ = await session.read({ nodeId: nodeId_CBCRead_BINBCR_REQ, attributeId: AttributeIds.Value });
-        await bcrCheck(session, Value_CBC_BINBCR_BCR, Value_CBC_BINBCR_REQ, nodeId_CBCWrite_BINBCR_CODE, nodeId_CBCWrite_BINBCR_REP, 'cathode', 'mixing800');
+        await bcrCheck(session, Value_CBC_BINBCR_BCR, Value_CBC_BINBCR_REQ, nodeId_CBCWrite_BINBCR_CODE, nodeId_CBCWrite_BINBCR_REP, 'cathode', 'mixing800', 'C_BINBCR');
 
         const Value_AMC_CMCBCR_BCR = await session.read({ nodeId: nodeId_AMCRead_CMCBCR_BCR, attributeId: AttributeIds.Value });
         const Value_AMC_CMCBCR_REQ = await session.read({ nodeId: nodeId_AMCRead_CMCBCR_REQ, attributeId: AttributeIds.Value });
-        await bcrCheck(session, Value_AMC_CMCBCR_BCR, Value_AMC_CMCBCR_REQ, nodeId_AMCWrite_CMCBCR_CODE, nodeId_AMCWrite_CMCBCR_REP, 'anode', 'mixing500');
+        await bcrCheck(session, Value_AMC_CMCBCR_BCR, Value_AMC_CMCBCR_REQ, nodeId_AMCWrite_CMCBCR_CODE, nodeId_AMCWrite_CMCBCR_REP, 'anode', 'mixing500', 'A_CMCBCR');
 
         const Value_CP_DP1BCR_BCR = await session.read({ nodeId: nodeId_CPRead_DP1BCR_BCR, attributeId: AttributeIds.Value });
         const Value_CP_DP1BCR_REQ = await session.read({ nodeId: nodeId_CPRead_DP1BCR_REQ, attributeId: AttributeIds.Value });
-        await bcrCheck(session, Value_CP_DP1BCR_BCR, Value_CP_DP1BCR_REQ, nodeId_CPWrite_DP1BCR_CODE, nodeId_CPWrite_DP1BCR_REP, 'cathode', 'mixing800');
+        await bcrCheck(session, Value_CP_DP1BCR_BCR, Value_CP_DP1BCR_REQ, nodeId_CPWrite_DP1BCR_CODE, nodeId_CPWrite_DP1BCR_REP, 'cathode', 'mixing800', 'C_DP1BCR');
 
         const Value_CP_DP2BCR_BCR = await session.read({ nodeId: nodeId_CPRead_DP2BCR_BCR, attributeId: AttributeIds.Value });
         const Value_CP_DP2BCR_REQ = await session.read({ nodeId: nodeId_CPRead_DP2BCR_REQ, attributeId: AttributeIds.Value });
-        await bcrCheck(session, Value_CP_DP2BCR_BCR, Value_CP_DP2BCR_REQ, nodeId_CPWrite_DP2BCR_CODE, nodeId_CPWrite_DP2BCR_REP, 'cathode', 'mixing800');
+        await bcrCheck(session, Value_CP_DP2BCR_BCR, Value_CP_DP2BCR_REQ, nodeId_CPWrite_DP2BCR_CODE, nodeId_CPWrite_DP2BCR_REP, 'cathode', 'mixing800', 'C_DP2BCR');
 
         const Value_CP_DPLBCR_BCR = await session.read({ nodeId: nodeId_CPRead_DPLBCR_BCR, attributeId: AttributeIds.Value });
         const Value_CP_DPLBCR_REQ = await session.read({ nodeId: nodeId_CPRead_DPLBCR_REQ, attributeId: AttributeIds.Value });
-        await bcrCheck(session, Value_CP_DPLBCR_BCR, Value_CP_DPLBCR_REQ, nodeId_CPWrite_DPLBCR_CODE, nodeId_CPWrite_DPLBCR_REP, 'cathode', 'mixing800');
+        await bcrCheck(session, Value_CP_DPLBCR_BCR, Value_CP_DPLBCR_REQ, nodeId_CPWrite_DPLBCR_CODE, nodeId_CPWrite_DPLBCR_REP, 'cathode', 'mixing800', 'C_DPLBCR');
 
         const Value_AP_DP1BCR_BCR = await session.read({ nodeId: nodeId_APRead_DP1BCR_BCR, attributeId: AttributeIds.Value });
         const Value_AP_DP1BCR_REQ = await session.read({ nodeId: nodeId_APRead_DP1BCR_REQ, attributeId: AttributeIds.Value });
-        await bcrCheck(session, Value_AP_DP1BCR_BCR, Value_AP_DP1BCR_REQ, nodeId_APWrite_DP1BCR_CODE, nodeId_APWrite_DP1BCR_REP, 'anode', 'mixing500');
+        await bcrCheck(session, Value_AP_DP1BCR_BCR, Value_AP_DP1BCR_REQ, nodeId_APWrite_DP1BCR_CODE, nodeId_APWrite_DP1BCR_REP, 'anode', 'mixing500', 'A_DP1BCR');
 
         const Value_AP_DP2BCR_BCR = await session.read({ nodeId: nodeId_APRead_DP2BCR_BCR, attributeId: AttributeIds.Value });
         const Value_AP_DP2BCR_REQ = await session.read({ nodeId: nodeId_APRead_DP2BCR_REQ, attributeId: AttributeIds.Value });
-        await bcrCheck(session, Value_AP_DP2BCR_BCR, Value_AP_DP2BCR_REQ, nodeId_APWrite_DP2BCR_CODE, nodeId_APWrite_DP2BCR_REP, 'anode', 'mixing500');
+        await bcrCheck(session, Value_AP_DP2BCR_BCR, Value_AP_DP2BCR_REQ, nodeId_APWrite_DP2BCR_CODE, nodeId_APWrite_DP2BCR_REP, 'anode', 'mixing500', 'A_DP2BCR');
 
         const Value_AP_DPSBCR_BCR = await session.read({ nodeId: nodeId_APRead_DPSBCR_BCR, attributeId: AttributeIds.Value });
         const Value_AP_DPSBCR_REQ = await session.read({ nodeId: nodeId_APRead_DPSBCR_REQ, attributeId: AttributeIds.Value });
-        await bcrCheck(session, Value_AP_DPSBCR_BCR, Value_AP_DPSBCR_REQ, nodeId_APWrite_DPSBCR_CODE, nodeId_APWrite_DPSBCR_REP, 'anode', 'mixing500');
+        await bcrCheck(session, Value_AP_DPSBCR_BCR, Value_AP_DPSBCR_REQ, nodeId_APWrite_DPSBCR_CODE, nodeId_APWrite_DPSBCR_REP, 'anode', 'mixing500', 'A_DPSBCR');
 
         // const Value_CP_LDCOM_REQ = await session.read({ nodeId: nodeId_CPRead_LDCOM_REQ, attributeId: AttributeIds.Value });
         // if(Value_CP_LDCOM_REQ.value.value == 1){
