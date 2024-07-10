@@ -125,7 +125,7 @@ async function collectAndSendData(session) {
         const Value_AC_Status_Stop = await session.read({ nodeId: nodeId_ACRead_Status_Stop, attributeId: AttributeIds.Value });
         const Value_AC_Status_Error = await session.read({ nodeId: nodeId_ACRead_Status_Error, attributeId: AttributeIds.Value });
     
-	const Value_AC_Density_DSAN = await session.read({ nodeId: nodeId_ACRead_Density_DSAN, attributeId: AttributeIds.Value });
+        const Value_AC_Density_DSAN = await session.read({ nodeId: nodeId_ACRead_Density_DSAN, attributeId: AttributeIds.Value });
         const Value_AC_Density_DSAP = await session.read({ nodeId: nodeId_ACRead_Density_DSAP, attributeId: AttributeIds.Value });
         const Value_AC_Density_OSAN = await session.read({ nodeId: nodeId_ACRead_Density_OSAN, attributeId: AttributeIds.Value });
         const Value_AC_Density_OSAP = await session.read({ nodeId: nodeId_ACRead_Density_OSAP, attributeId: AttributeIds.Value });
@@ -134,11 +134,11 @@ async function collectAndSendData(session) {
         const Value_AC_Roll_CButton = await session.read({ nodeId: nodeId_ACRead_Roll_CButton, attributeId: AttributeIds.Value });
         const Value_AC_Roll_SlotDie = await session.read({ nodeId: nodeId_ACRead_Roll_SlotDie, attributeId: AttributeIds.Value });
         const Value_AC_Roll_Pump = await session.read({ nodeId: nodeId_ACRead_Roll_Pump, attributeId: AttributeIds.Value });
-	const Value_AC_Roll_UnLen = await session.read({ nodeId: nodeId_ACRead_Roll_UnLen, attributeId: AttributeIds.Value });
+        const Value_AC_Roll_UnLen = await session.read({ nodeId: nodeId_ACRead_Roll_UnLen, attributeId: AttributeIds.Value });
         const Value_AC_Roll_CoLen = await session.read({ nodeId: nodeId_ACRead_Roll_CoLen, attributeId: AttributeIds.Value });
         const Value_AC_Roll_ReLen = await session.read({ nodeId: nodeId_ACRead_Roll_ReLen, attributeId: AttributeIds.Value });
 
-	const Value_AC_active = await session.read({ nodeId: nodeId_ACRead_active, attributeId: AttributeIds.Value });
+        const Value_AC_active = await session.read({ nodeId: nodeId_ACRead_active, attributeId: AttributeIds.Value });
 
         const String_LotNo = String.fromCharCode(...Value_AC_LotNo.value.value.filter(code => code !== 0));
         const String_ETC = String.fromCharCode(...Value_AC_ETC.value.value.filter(code => code !== 0));
@@ -357,7 +357,7 @@ async function collectAndSendData(session) {
         json_AC_Status.Stop = Value_AC_Status_Stop.value.value;
         json_AC_Status.Error = Value_AC_Status_Error.value.value;
 
-	let json_AC_Density = {}
+        let json_AC_Density = {}
         let topic_AC_Density = 'sfs.machine.coater.a.dens1'
         json_AC_Density.DSAN = {};
         json_AC_Density.DSAN.unit = "μm";
@@ -380,10 +380,10 @@ async function collectAndSendData(session) {
         json_AC_Roll.CButton = Value_AC_Roll_CButton.value.value;
         json_AC_Roll.SlotDie = Value_AC_Roll_SlotDie.value.value;
         json_AC_Roll.Pump = Value_AC_Roll_Pump.value.value;
-	json_AC_Roll.Active = Value_AC_active.value.value;
-	json_AC_Roll.UnLen = Value_AC_Roll_UnLen.value.value;
-        json_AC_Roll.CoLen = Value_AC_Roll_CoLen.value.value;
-        json_AC_Roll.ReLen = Value_AC_Roll_ReLen.value.value;
+        json_AC_Roll.Active = Value_AC_active.value.value;
+        json_AC_Roll.UnLen = (Value_AC_Roll_UnLen.value.value * 0.1).toFixed(2) * 1;
+        json_AC_Roll.CoLen = (Value_AC_Roll_CoLen.value.value * 0.1).toFixed(2) * 1;
+        json_AC_Roll.ReLen = (Value_AC_Roll_ReLen.value.value * 0.1).toFixed(2) * 1;
 
         await sendKafkaMessage(topic_AC_UnWinder, json_AC_UnWinder);
         await sendKafkaMessage(topic_AC_CHead, json_AC_CHead);
@@ -391,8 +391,8 @@ async function collectAndSendData(session) {
         await sendKafkaMessage(topic_AC_OutFeed, json_AC_OutFeed);
         await sendKafkaMessage(topic_AC_ReWinder, json_AC_ReWinder);
         await sendKafkaMessage(topic_AC_Status, json_AC_Status);
-	await sendKafkaMessage(topic_AC_Density, json_AC_Density);
-	await sendKafkaMessage(topic_AC_Roll, json_AC_Roll);
+        await sendKafkaMessage(topic_AC_Density, json_AC_Density);
+        await sendKafkaMessage(topic_AC_Roll, json_AC_Roll);
         
     } catch (error) {
         console.error('데이터 수집 및 전송 중 오류 발생:', error);

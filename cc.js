@@ -380,10 +380,10 @@ async function collectAndSendData(session) {
         json_CC_Roll.CButton = Value_CC_Roll_CButton.value.value;
         json_CC_Roll.SlotDie = Value_CC_Roll_SlotDie.value.value;
         json_CC_Roll.Pump = Value_CC_Roll_Pump.value.value;
-	json_CC_Roll.Active = Value_CC_active.value.value;
-	json_CC_Roll.UnLen = Value_CC_Roll_UnLen.value.value;
-        json_CC_Roll.CoLen = Value_CC_Roll_CoLen.value.value;
-        json_CC_Roll.ReLen = Value_CC_Roll_ReLen.value.value;
+        json_CC_Roll.Active = Value_CC_active.value.value;
+        json_CC_Roll.UnLen = (Value_CC_Roll_UnLen.value.value * 0.1).toFixed(2) * 1;
+        json_CC_Roll.CoLen = (Value_CC_Roll_CoLen.value.value * 0.1).toFixed(2) * 1;
+        json_CC_Roll.ReLen = (Value_CC_Roll_ReLen.value.value * 0.1).toFixed(2) * 1;
 
         await sendKafkaMessage(topic_CC_UnWinder, json_CC_UnWinder);
         await sendKafkaMessage(topic_CC_CHead, json_CC_CHead);
