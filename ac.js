@@ -212,12 +212,12 @@ async function collectAndSendData(session) {
         json_AC_CHead.CPSV.unit = "RPM";
         json_AC_CHead.CPSV.min = 0;
         json_AC_CHead.CPSV.max = 300.0;
-        json_AC_CHead.CPSV.value = Value_AC_CHead_CPSV.value.value.toFixed(2) * 1;
+        json_AC_CHead.CPSV.value = (Value_AC_CHead_CPSV.value.value * 0.1).toFixed(2) * 1;
         json_AC_CHead.CPPV = {};
         json_AC_CHead.CPPV.unit = "RPM";
         json_AC_CHead.CPPV.min = 0;
         json_AC_CHead.CPPV.max = 300.0;
-        json_AC_CHead.CPPV.value = Value_AC_CHead_CPPV.value.value.toFixed(2) * 1;
+        json_AC_CHead.CPPV.value = (Value_AC_CHead_CPPV.value.value * 0.1).toFixed(2) * 1;
 
         let json_AC_Dryer = {}
         let topic_AC_Dryer = 'sfs.machine.coater.a.dy1';

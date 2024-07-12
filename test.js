@@ -1,27 +1,72 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const redis = require('redis');
+const { OPCUAClient, AttributeIds, DataType } = require("node-opcua-client");
+const { Kafka } = require('kafkajs');
 
-const client_redis = redis.createClient();
-
-const { OPCUAClient, AttributeIds, DataType, VariantArrayType } = require("node-opcua-client");
-
-const endpointUrl = "opc.tcp://10.10.10.91:4840";
-
-const app = express();
-
-app.use(bodyParser.json());
-
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+const kafka = new Kafka({
+  clientId: 'my-kafka-app',
+  brokers: ['10.10.10.52:9092'] // Kafka 브로커의 주소
 });
 
-app.post('/opc_write', async (req, res) => {
-    const nodeId = req.body.nodeId;
-    const value = req.body.value;
+const producer = kafka.producer();
 
+// Your OPC UA server endpoint
+const endpointUrl = "opc.tcp://10.10.10.91:4840";
+
+const nodeId_APRead_Com_Req = "ns=6;s=::APRead:ReadData.Com.Req";
+//const nodeId_APRead_Com_Rep = "ns=6;s=::APRead:ReadData.Com.Rep";
+const nodeId_APRead_Len_ProdLen = "ns=6;s=::APRead:ReadData.Len.ProdLen";
+const nodeId_APRead_Len_PressLen = "ns=6;s=::APRead:ReadData.Len.PressLen";
+
+const nodeId_CPRead_Com_Req = "ns=6;s=::CPRead:ReadData.Com.Req";
+//const nodeId_CPRead_Com_Rep = "ns=6;s=::CPRead:ReadData.Com.Rep";
+const nodeId_CPRead_Len_ProdLen = "ns=6;s=::CPRead:ReadData.Len.ProdLen";
+const nodeId_CPRead_Len_PressLen = "ns=6;s=::CPRead:ReadData.Len.PressLen";
+
+const nodeId_ASRead_Com_Req = "ns=6;s=::ASRead:ReadData.Com.Req";
+//const nodeId_ASRead_Com_Rep = "ns=6;s=::ASRead:ReadData.Com.Rep";
+const nodeId_ASRead_Len_ProdLen = "ns=6;s=::ASRead:ReadData.Len.ProdLen";
+const nodeId_ASRead_Len_PressLen = "ns=6;s=::ASRead:ReadData.Len.PressLen";
+
+const nodeId_CSRead_Com_Req = "ns=6;s=::CSRead:ReadData.Com.Req";
+//const nodeId_CSRead_Com_Rep = "ns=6;s=::CSRead:ReadData.Com.Rep";
+const nodeId_CSRead_Len_ProdLen = "ns=6;s=::CSRead:ReadData.Len.ProdLen";
+const nodeId_CSRead_Len_PressLen = "ns=6;s=::CSRead:ReadData.Len.PressLen";
+
+async function collectAndSendData(session) {
+    try {
+        const Value_AP_Com_Req = await session.read({ nodeId: nodeId_APRead_Com_Req, attributeId: AttributeIds.Value });
+        const Value_AP_Len_ProdLen = await session.read({ nodeId: nodeId_APRead_Len_ProdLen, attributeId: AttributeIds.Value });
+        const Value_AP_Len_PressLen = await session.read({ nodeId: nodeId_APRead_Len_PressLen, attributeId: AttributeIds.Value });
+        const Value_CP_Com_Req = await session.read({ nodeId: nodeId_CPRead_Com_Req, attributeId: AttributeIds.Value });
+        const Value_CP_Len_ProdLen = await session.read({ nodeId: nodeId_CPRead_Len_ProdLen, attributeId: AttributeIds.Value });
+        const Value_CP_Len_PressLen = await session.read({ nodeId: nodeId_CPRead_Len_PressLen, attributeId: AttributeIds.Value });
+        const Value_AS_Com_Req = await session.read({ nodeId: nodeId_ASRead_Com_Req, attributeId: AttributeIds.Value });
+        const Value_AS_Len_ProdLen = await session.read({ nodeId: nodeId_ASRead_Len_ProdLen, attributeId: AttributeIds.Value });
+        const Value_AS_Len_PressLen = await session.read({ nodeId: nodeId_ASRead_Len_PressLen, attributeId: AttributeIds.Value });
+        const Value_CS_Com_Req = await session.read({ nodeId: nodeId_CSRead_Com_Req, attributeId: AttributeIds.Value });
+        const Value_CS_Len_ProdLen = await session.read({ nodeId: nodeId_CSRead_Len_ProdLen, attributeId: AttributeIds.Value });
+        const Value_CS_Len_PressLen = await session.read({ nodeId: nodeId_CSRead_Len_PressLen, attributeId: AttributeIds.Value });
+
+        console.log(Value_AP_Com_Req.value.value);
+        console.log(Value_AP_Len_ProdLen.value.value);
+        console.log(Value_AP_Len_PressLen.value.value);
+        console.log(Value_CP_Com_Req.value.value);
+        console.log(Value_CP_Len_ProdLen.value.value);
+        console.log(Value_CP_Len_PressLen.value.value);
+        console.log(Value_AS_Com_Req.value.value);
+        console.log(Value_AS_Len_ProdLen.value.value);
+        console.log(Value_AS_Len_PressLen.value.value);
+        console.log(Value_CS_Com_Req.value.value);
+        console.log(Value_CS_Len_ProdLen.value.value);
+        console.log(Value_CS_Len_PressLen.value.value);
+
+    } catch (error) {
+        console.error('데이터 수집 및 전송 중 오류 발생:', error);
+    }
+}
+
+
+async function main() {
+    await producer.connect();
     const client = OPCUAClient.create({ endpointMustExist: false });
     try{
         await client.connect(endpointUrl);
@@ -30,103 +75,28 @@ app.post('/opc_write', async (req, res) => {
         const session = await client.createSession();
         console.log("Session created");
 
-        await SendData(session, nodeId, value);
-        await client.disconnect();
-        res.status(200).send('POST request received successfully.');
-    } catch (error) {
-        console.error("Initialization failed:", error);
-        await client.disconnect();
-        res.status(500).json({ error: 'An error occurred' });
-    }
-});
-
-app.post('/batchid', async (req, res) => {
-    const mixerid = req.body.mixerid;
-    const value = req.body.value;
-
-    try{
-        await client_redis.connect();
-        console.log(`Setting key: ${mixerid}, value: ${value}, type of value: ${typeof value}`);
-        await client_redis.set(mixerid, value);
-        res.status(200).send('POST request received successfully.');
-        await client_redis.disconnect();
-    } catch (error) {
-        console.error("Initialization failed:", error);
-        await client_redis.disconnect();
-        res.status(500).json({ error: 'An error occurred' });
-    }
-});
-
-app.post('/bcr_list', async (req, res) => {
-    const modelId = req.body.modelId;
-    try{
-        await client_redis.connect();
-        let get_data = await client_redis.get(modelId);
-        //let get_data = await removeDuplicates(get_data, "BCR");
-        res.status(200).send(JSON.parse(get_data));
-        await client_redis.disconnect();
-    } catch (error) {
-        await client_redis.disconnect();
-        res.status(500).json({ error: 'An error occurred' });
-    }
-});
-
-async function removeDuplicates(array, key) {
-    const seen = new Set();
-    return array.filter(item => {
-        const val = item[key];
-        if (seen.has(val)) {
-            return false;
-        }
-        seen.add(val);
-        return true;
-    });
-}
-
-async function SendData(session, nodeId, value) {
-    const node_id_array = {
-        'AP_LotNo' : 'ns=6;s=::APWrite:WriteData.LotNo',
-        'CP_LotNo' : 'ns=6;s=::CPWrite:WriteData.LotNo',
-        'AS_LotNo' : 'ns=6;s=::ASWrite:WriteData.LotNo',
-        'CS_LotNo' : 'ns=6;s=::CSWrite:WriteData.LotNo',
-        'AC_LotNo' : 'ns=6;s=::ACWrite:WriteData.LotNo',
-        'CC_LotNo' : 'ns=6;s=::CCWrite:WriteData.LotNo',
-    }
-    try {
-    function stringToIntArray(str) {
-        const maxLength = 32; // 최대 길이를 32로 설정합니다.
-        const intArray = new Int16Array(maxLength).fill(0); // 최대 길이의 배열을 생성하고 0으로 채웁니다.
-
-        for (let i = 0; i < str.length && i < maxLength; i++) {
-            const charCode = str.charCodeAt(i);
-            intArray[i] = charCode;
-        }
-
-        return intArray;
-    }
-
-    const intArray = stringToIntArray(value);
-
-    const statusCode = await session.write({
-        nodeId: node_id_array[nodeId],
-        attributeId: AttributeIds.Value,
-        value: {
-            value: {
-                dataType: DataType.Int16,
-                arrayType: VariantArrayType.Array,
-                value: intArray
+        const run = async () => {
+            while (true) {
+                await collectAndSendData(session);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
             }
-        }
-    });
-
-    console.log("Write result:", statusCode);
+        };
+        run().catch(console.error);
     } catch (error) {
-        console.error('데이터 수집 및 전송 중 오류 발생:', error);
+        console.error("Initialization failed:", error);
+        await producer.disconnect();
+        await client.disconnect();
     }
 }
 
-const PORT = process.env.PORT || 6000;
-const HOST = '10.10.10.51'
-app.listen(PORT, HOST, () => {
-    console.log(`Server is running on http://${HOST}:${PORT}.`);
-});
+async function sendKafkaMessage(topic, messages) {
+
+    await producer.send({
+        topic: topic, // 전송할 토픽
+        messages: [
+        { value: JSON.stringify(messages) } // 전송할 메시지
+        ],
+    });
+}
+
+main();

@@ -134,11 +134,11 @@ async function collectAndSendData(session) {
         const Value_CC_Roll_CButton = await session.read({ nodeId: nodeId_CCRead_Roll_CButton, attributeId: AttributeIds.Value });
         const Value_CC_Roll_SlotDie = await session.read({ nodeId: nodeId_CCRead_Roll_SlotDie, attributeId: AttributeIds.Value });
         const Value_CC_Roll_Pump = await session.read({ nodeId: nodeId_CCRead_Roll_Pump, attributeId: AttributeIds.Value });
-	const Value_CC_Roll_UnLen = await session.read({ nodeId: nodeId_CCRead_Roll_UnLen, attributeId: AttributeIds.Value });
+        const Value_CC_Roll_UnLen = await session.read({ nodeId: nodeId_CCRead_Roll_UnLen, attributeId: AttributeIds.Value });
         const Value_CC_Roll_CoLen = await session.read({ nodeId: nodeId_CCRead_Roll_CoLen, attributeId: AttributeIds.Value });
         const Value_CC_Roll_ReLen = await session.read({ nodeId: nodeId_CCRead_Roll_ReLen, attributeId: AttributeIds.Value });
 
-	const Value_CC_active = await session.read({ nodeId: nodeId_CCRead_active, attributeId: AttributeIds.Value });
+        const Value_CC_active = await session.read({ nodeId: nodeId_CCRead_active, attributeId: AttributeIds.Value });
 
         const String_LotNo = String.fromCharCode(...Value_CC_LotNo.value.value.filter(code => code !== 0));
         const String_ETC = String.fromCharCode(...Value_CC_ETC.value.value.filter(code => code !== 0));
@@ -212,12 +212,12 @@ async function collectAndSendData(session) {
         json_CC_CHead.CPSV.unit = "RPM";
         json_CC_CHead.CPSV.min = 0;
         json_CC_CHead.CPSV.max = 300.0;
-        json_CC_CHead.CPSV.value = Value_CC_CHead_CPSV.value.value.toFixed(2) * 1;
+        json_CC_CHead.CPSV.value = (Value_CC_CHead_CPSV.value.value * 0.1).toFixed(2) * 1;
         json_CC_CHead.CPPV = {};
         json_CC_CHead.CPPV.unit = "RPM";
         json_CC_CHead.CPPV.min = 0;
         json_CC_CHead.CPPV.max = 300.0;
-        json_CC_CHead.CPPV.value = Value_CC_CHead_CPPV.value.value.toFixed(2) * 1;
+        json_CC_CHead.CPPV.value = (Value_CC_CHead_CPPV.value.value * 0.1).toFixed(2) * 1;
 
         let json_CC_Dryer = {}
         let topic_CC_Dryer = 'sfs.machine.coater.c.dy1';

@@ -3,8 +3,8 @@ const { Kafka } = require('kafkajs');
 const opcua = require("node-opcua-client");
 
 const kafka = new Kafka({
-  clientId: 'my-kafka-app',
-  brokers: ['10.10.10.52:9092'] // Kafka 브로커의 주소
+    clientId: 'my-kafka-app',
+    brokers: ['10.10.10.52:9092'] // Kafka 브로커의 주소
 });
 
 const producer = kafka.producer();
@@ -41,6 +41,11 @@ const nodeId_APRead_ReWinder_Diameter = "ns=6;s=::APRead:ReadData.ReWinder.Diame
 
 const nodeId_APRead_active = "ns=6;s=::APRead:ReadBlock_0.Active";
 
+const nodeId_APRead_Com_Req = "ns=6;s=::APRead:ReadData.Com.Req";
+const nodeId_APRead_Com_Rep = "ns=6;s=::APWrite:WriteData.Com.Rep";
+const nodeId_APRead_Len_ProdLen = "ns=6;s=::APRead:ReadData.Len.ProdLen";
+const nodeId_APRead_Len_PressLen = "ns=6;s=::APRead:ReadData.Len.PressLen";
+
 async function collectAndSendData(session) {
     try {
         const Value_AP_LotNo = await session.read({ nodeId: nodeId_APRead_LotNo, attributeId: AttributeIds.Value });
@@ -69,10 +74,14 @@ async function collectAndSendData(session) {
         const Value_AP_ReWinder_TSPV = await session.read({ nodeId: nodeId_APRead_ReWinder_TSPV, attributeId: AttributeIds.Value });
         const Value_AP_ReWinder_Diameter = await session.read({ nodeId: nodeId_APRead_ReWinder_Diameter, attributeId: AttributeIds.Value });
     
-	const Value_AP_active = await session.read({ nodeId: nodeId_APRead_active, attributeId: AttributeIds.Value });
+        const Value_AP_active = await session.read({ nodeId: nodeId_APRead_active, attributeId: AttributeIds.Value });
 
         const String_LotNo = String.fromCharCode(...Value_AP_LotNo.value.value.filter(code => code !== 0 && code !== 1));
         const String_ETC = String.fromCharCode(...Value_AP_ETC.value.value.filter(code => code !== 0));
+
+        const Value_AP_Com_Req = await session.read({ nodeId: nodeId_APRead_Com_Req, attributeId: AttributeIds.Value });
+        const Value_AP_Len_ProdLen = await session.read({ nodeId: nodeId_APRead_Len_ProdLen, attributeId: AttributeIds.Value });
+        const Value_AP_Len_PressLen = await session.read({ nodeId: nodeId_APRead_Len_PressLen, attributeId: AttributeIds.Value });
 
         let json_AP_UnWinder = {}
         let topic_AP_UnWinder = 'sfs.machine.press.a.uw1';
@@ -188,7 +197,7 @@ async function collectAndSendData(session) {
         json_AP_ReWinder.Diameter.min = 96.6;
         json_AP_ReWinder.Diameter.max = 500.0;
         json_AP_ReWinder.Diameter.value = Value_AP_ReWinder_Diameter.value.value;
-	json_AP_ReWinder.Active = Value_AP_active.value.value;
+        json_AP_ReWinder.Active = Value_AP_active.value.value;
 
         await sendKafkaMessage(topic_AP_UnWinder, json_AP_UnWinder);
         await sendKafkaMessage(topic_AP_Press, json_AP_Press);
