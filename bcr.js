@@ -233,8 +233,8 @@ async function bcrCheck(session, BCR, REQ, CODE, REP, polarity, process, key){
                 await writeNode(session, REP, DataType.Byte, 1);
                 let code_value = await session.read({ nodeId: CODE, attributeId: AttributeIds.Value });
                 let redis_value = {
-                    "BCR" : BCR,
-                    "CODE" : code_value
+                    "BCR" : BCR.value.value,
+                    "CODE" : code_value.value.value
                 }
                 await writeRedis(key, redis_value);
             }

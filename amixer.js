@@ -954,7 +954,7 @@ async function collectAndSendData(session, redis_value) {
         json_AP_DP.SIP = AP_DP_Bit4[2];
         json_AP_DP.SOP = AP_DP_Bit4[1];
         json_AP_DP.SVV = AP_DP_Bit4[0];
-	json_AP_DP.AMS_MMBID = {}
+        json_AP_DP.AMS_MMBID = {}
         json_AP_DP.AMS_MMBID.bcr = Value_AMS_MMBCR_BCR.value.value;
         json_AP_DP.AMS_MMBID.req = Value_AMS_MMBCR_REQ.value.value;
         json_AP_DP.AMS_MMBID.code = Value_AMS_MMBCR_CODE.value.value;
