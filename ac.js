@@ -361,19 +361,19 @@ async function collectAndSendData(session) {
         let topic_AC_Density = 'sfs.machine.coater.a.dens1'
         json_AC_Density.DSAN = {};
         json_AC_Density.DSAN.unit = "μm";
-        json_AC_Density.DSAN.value = Value_AC_Density_DSAN.value.value;
+        json_AC_Density.DSAN.value = (Value_AC_Density_DSAN.value.value * 0.1).toFixed(3) * 1;
         json_AC_Density.DSAP = {};
         json_AC_Density.DSAP.unit = "μm";
-        json_AC_Density.DSAP.value = Value_AC_Density_DSAP.value.value;
+        json_AC_Density.DSAP.value = (Value_AC_Density_DSAP.value.value * 0.1).toFixed(3) * 1;
         json_AC_Density.OSAN = {};
         json_AC_Density.OSAN.unit = "μm";
-        json_AC_Density.OSAN.value = Value_AC_Density_OSAN.value.value;
+        json_AC_Density.OSAN.value = (Value_AC_Density_OSAN.value.value * 0.1).toFixed(3) * 1;
         json_AC_Density.OSAP = {};
         json_AC_Density.OSAP.unit = "μm";
-        json_AC_Density.OSAP.value = Value_AC_Density_OSAP.value.value;
+        json_AC_Density.OSAP.value = (Value_AC_Density_OSAP.value.value * 0.1).toFixed(3) * 1;
         json_AC_Density.TDAN = {};
         json_AC_Density.TDAN.unit = "μm";
-        json_AC_Density.TDAN.value = Value_AC_Density_TDAN.value.value;
+        json_AC_Density.TDAN.value = (Value_AC_Density_TDAN.value.value * 0.1).toFixed(3) * 1;
 
         let json_AC_Roll = {}
         let topic_AC_Roll = 'sfs.machine.coater.a.roll1'

@@ -17,24 +17,9 @@ app.post('/bcr_list', async (req, res) => {
     let test_data = {
         "bcr_list": [
             {
-                "BCR": "E1TE77A422461901",
-                "CODE": "1",
+                "BCR": "TEST-STOCK-1",
+                "CODE": 1,
                 "id": 1
-            },
-            {
-                "BCR": "E1TE77A422461401",
-                "CODE": "1",
-                "id": 2
-            },
-            {
-                "BCR": "E1TE77A412461002",
-                "CODE": "1",
-                "id": 3
-            },
-            {
-                "BCR": "E1TE77A412461001",
-                "CODE": "1",
-                "id": 4
             }
         ]
     

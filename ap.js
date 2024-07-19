@@ -22,6 +22,12 @@ const nodeId_APRead_UnWinder_Diameter = "ns=6;s=::APRead:ReadData.UnWinder.Diame
 
 const nodeId_APRead_Press_RollTSV = "ns=6;s=::APRead:ReadData.Press.RollTSV";
 const nodeId_APRead_Press_RollTPV = "ns=6;s=::APRead:ReadData.Press.RollTPV";
+const nodeId_APRead_Press_RollBSV = "ns=6;s=::APRead:ReadData.Press.RollBSV";
+const nodeId_APRead_Press_RollBPV = "ns=6;s=::APRead:ReadData.Press.RollBPV";
+const nodeId_APRead_Press_PreHTSV = "ns=6;s=::APRead:ReadData.Press.PreHTSV";
+const nodeId_APRead_Press_PreHTPV = "ns=6;s=::APRead:ReadData.Press.PreHTPV";
+const nodeId_APRead_Press_PreHBSV = "ns=6;s=::APRead:ReadData.Press.PreHBSV";
+const nodeId_APRead_Press_PreHBPV = "ns=6;s=::APRead:ReadData.Press.PreHBPV";
 const nodeId_APRead_Press_SPOS = "ns=6;s=::APRead:ReadData.Press.SPOS";
 const nodeId_APRead_Press_SPDS = "ns=6;s=::APRead:ReadData.Press.SPDS";
 const nodeId_APRead_Press_HDHOS = "ns=6;s=::APRead:ReadData.Press.HDHOS";
@@ -29,15 +35,22 @@ const nodeId_APRead_Press_HDHDS = "ns=6;s=::APRead:ReadData.Press.HDHDS";
 const nodeId_APRead_Press_HDLOS = "ns=6;s=::APRead:ReadData.Press.HDLOS";
 const nodeId_APRead_Press_HDLDS = "ns=6;s=::APRead:ReadData.Press.HDLDS";
 const nodeId_APRead_Press_FP = "ns=6;s=::APRead:ReadData.Press.FP";
-const nodeId_APRead_Press_Speed = "ns=6;s=::APRead:ReadData.Press.Speed";
 const nodeId_APRead_Press_GDDS = "ns=6;s=::APRead:ReadData.Press.GDDS";
 
 const nodeId_APRead_OutFeed_TSDS = "ns=6;s=::APRead:ReadData.OutFeed.TSDS";
 const nodeId_APRead_OutFeed_TSOS = "ns=6;s=::APRead:ReadData.OutFeed.TSOS";
+const nodeId_APRead_OutFeed_PreHSRSV = "ns=6;s=::APRead:ReadData.OutFeed.PreHSRSV";
+const nodeId_APRead_OutFeed_CoolSRSV = "ns=6;s=::APRead:ReadData.OutFeed.CoolSRSV";
+const nodeId_APRead_OutFeed_CoolTSV = "ns=6;s=::APRead:ReadData.OutFeed.CoolTSV";
+const nodeId_APRead_OutFeed_CoolTPV = "ns=6;s=::APRead:ReadData.OutFeed.CoolTPV";
 
 const nodeId_APRead_ReWinder_TSSV = "ns=6;s=::APRead:ReadData.ReWinder.TSSV";
 const nodeId_APRead_ReWinder_TSPV = "ns=6;s=::APRead:ReadData.ReWinder.TSPV";
 const nodeId_APRead_ReWinder_Diameter = "ns=6;s=::APRead:ReadData.ReWinder.Diameter";
+
+const nodeId_APRead_IHA_DSIHASV = "ns=6;s=::APRead:ReadData.IHA.DSIHASV";
+const nodeId_APRead_IHA_OSIHASV = "ns=6;s=::APRead:ReadData.IHA.OSIHASV";
+const nodeId_APRead_IHA_IHAMode = "ns=6;s=::APRead:ReadData.IHA.IHAMode";
 
 const nodeId_APRead_active = "ns=6;s=::APRead:ReadBlock_0.Active";
 
@@ -57,6 +70,12 @@ async function collectAndSendData(session) {
     
         const Value_AP_Press_RollTSV = await session.read({ nodeId: nodeId_APRead_Press_RollTSV, attributeId: AttributeIds.Value });
         const Value_AP_Press_RollTPV = await session.read({ nodeId: nodeId_APRead_Press_RollTPV, attributeId: AttributeIds.Value });
+        const Value_AP_Press_RollBSV = await session.read({ nodeId: nodeId_APRead_Press_RollBSV, attributeId: AttributeIds.Value });
+        const Value_AP_Press_RollBPV = await session.read({ nodeId: nodeId_APRead_Press_RollBPV, attributeId: AttributeIds.Value });
+        const Value_AP_Press_PreHTSV = await session.read({ nodeId: nodeId_APRead_Press_PreHTSV, attributeId: AttributeIds.Value });
+        const Value_AP_Press_PREHTPV = await session.read({ nodeId: nodeId_APRead_Press_PreHTPV, attributeId: AttributeIds.Value });
+        const Value_AP_Press_PREHBSV = await session.read({ nodeId: nodeId_APRead_Press_PreHBSV, attributeId: AttributeIds.Value });
+        const Value_AP_Press_PREHBPV = await session.read({ nodeId: nodeId_APRead_Press_PreHBPV, attributeId: AttributeIds.Value });
         const Value_AP_Press_SPOS = await session.read({ nodeId: nodeId_APRead_Press_SPOS, attributeId: AttributeIds.Value });
         const Value_AP_Press_SPDS = await session.read({ nodeId: nodeId_APRead_Press_SPDS, attributeId: AttributeIds.Value });
         const Value_AP_Press_HDHOS = await session.read({ nodeId: nodeId_APRead_Press_HDHOS, attributeId: AttributeIds.Value });
@@ -64,15 +83,22 @@ async function collectAndSendData(session) {
         const Value_AP_Press_HDLOS = await session.read({ nodeId: nodeId_APRead_Press_HDLOS, attributeId: AttributeIds.Value });
         const Value_AP_Press_HDLDS = await session.read({ nodeId: nodeId_APRead_Press_HDLDS, attributeId: AttributeIds.Value });
         const Value_AP_Press_FP = await session.read({ nodeId: nodeId_APRead_Press_FP, attributeId: AttributeIds.Value });
-        const Value_AP_Press_Speed = await session.read({ nodeId: nodeId_APRead_Press_Speed, attributeId: AttributeIds.Value });
         const Value_AP_Press_GDDS = await session.read({ nodeId: nodeId_APRead_Press_GDDS, attributeId: AttributeIds.Value });
         
         const Value_AP_OutFeed_TSDS = await session.read({ nodeId: nodeId_APRead_OutFeed_TSDS, attributeId: AttributeIds.Value });
         const Value_AP_OutFeed_TSOS = await session.read({ nodeId: nodeId_APRead_OutFeed_TSOS, attributeId: AttributeIds.Value });
+        const Value_AP_OutFeed_PreHSRSV = await session.read({ nodeId: nodeId_APRead_OutFeed_PreHSRSV, attributeId: AttributeIds.Value });
+        const Value_AP_OutFeed_CoolSRSV = await session.read({ nodeId: nodeId_APRead_OutFeed_CoolSRSV, attributeId: AttributeIds.Value });
+        const Value_AP_OutFeed_CoolTSV = await session.read({ nodeId: nodeId_APRead_OutFeed_CoolTSV, attributeId: AttributeIds.Value });
+        const Value_AP_OutFeed_CoolTPV = await session.read({ nodeId: nodeId_APRead_OutFeed_CoolTPV, attributeId: AttributeIds.Value });
         
         const Value_AP_ReWinder_TSSV = await session.read({ nodeId: nodeId_APRead_ReWinder_TSSV, attributeId: AttributeIds.Value });
         const Value_AP_ReWinder_TSPV = await session.read({ nodeId: nodeId_APRead_ReWinder_TSPV, attributeId: AttributeIds.Value });
         const Value_AP_ReWinder_Diameter = await session.read({ nodeId: nodeId_APRead_ReWinder_Diameter, attributeId: AttributeIds.Value });
+
+        const Value_AP_IHA_DSIHASV = await session.read({ nodeId: nodeId_APRead_IHA_DSIHASV, attributeId: AttributeIds.Value });
+        const Value_AP_IHA_OSIHASV = await session.read({ nodeId: nodeId_APRead_IHA_OSIHASV, attributeId: AttributeIds.Value });
+        const Value_AP_IHA_IHAMode = await session.read({ nodeId: nodeId_APRead_IHA_IHAMode, attributeId: AttributeIds.Value });
     
         const Value_AP_active = await session.read({ nodeId: nodeId_APRead_active, attributeId: AttributeIds.Value });
 
@@ -152,11 +178,6 @@ async function collectAndSendData(session) {
         json_AP_Press.FP.min = 0;
         json_AP_Press.FP.max = 100;
         json_AP_Press.FP.value = Value_AP_Press_FP.value.value;
-        json_AP_Press.Speed = {};
-        json_AP_Press.Speed.unit = "m/min";
-        json_AP_Press.Speed.min = 0;
-        json_AP_Press.Speed.max = 50.0;
-        json_AP_Press.Speed.value = (Value_AP_Press_Speed.value.value * 0.1).toFixed(2) * 1;
         json_AP_Press.GDOS = {};
         json_AP_Press.GDOS.unit = "mm";
         json_AP_Press.GDOS.min = 45.000;
@@ -199,6 +220,14 @@ async function collectAndSendData(session) {
         json_AP_ReWinder.Diameter.value = Value_AP_ReWinder_Diameter.value.value;
         json_AP_ReWinder.Active = Value_AP_active.value.value;
 
+        // console.log(Value_AP_OutFeed_PreHSRSV.value.value);
+        // console.log(Value_AP_OutFeed_CoolSRSV.value.value);
+        // console.log(Value_AP_OutFeed_CoolTSV.value.value);
+        // console.log(Value_AP_OutFeed_CoolTPV.value.value);
+        // console.log(Value_AP_IHA_DSIHASV.value.value);
+        // console.log(Value_AP_IHA_OSIHASV.value.value);
+        // console.log(Value_AP_IHA_IHAMode.value.value);
+
         await sendKafkaMessage(topic_AP_UnWinder, json_AP_UnWinder);
         await sendKafkaMessage(topic_AP_Press, json_AP_Press);
         await sendKafkaMessage(topic_AP_OutFeed, json_AP_OutFeed);
@@ -219,8 +248,6 @@ async function main() {
 
         const session = await client.createSession();
         console.log("Session created");
-
-        await collectAndSendData(session);
 
         const run = async () => {
             while (true) {
