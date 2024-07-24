@@ -54,10 +54,13 @@ const nodeId_APRead_IHA_IHAMode = "ns=6;s=::APRead:ReadData.IHA.IHAMode";
 
 const nodeId_APRead_active = "ns=6;s=::APRead:ReadBlock_0.Active";
 
-const nodeId_APRead_Com_Req = "ns=6;s=::APRead:ReadData.Com.Req";
-const nodeId_APRead_Com_Rep = "ns=6;s=::APWrite:WriteData.Com.Rep";
-const nodeId_APRead_Len_ProdLen = "ns=6;s=::APRead:ReadData.Len.ProdLen";
-const nodeId_APRead_Len_PressLen = "ns=6;s=::APRead:ReadData.Len.PressLen";
+const nodeId_APRead_Main_Req = "ns=6;s=::APRead:ReadData.Main.Req";
+const nodeId_APWrite_Main_Rep = "ns=6;s=::APWrite:WriteData.Main.Rep";
+const nodeId_APRead_Main_ProdLen = "ns=6;s=::APRead:ReadData.Main.ProdLen";
+const nodeId_APRead_Main_PressLen = "ns=6;s=::APRead:ReadData.Main.PressLen";
+
+const nodeId_APRead_Main_LSPSV = "ns=6;s=::APRead:ReadData.Main.LSPSV";
+const nodeId_APRead_Main_LSPPV = "ns=6;s=::APRead:ReadData.Main.LSPPV";
 
 async function collectAndSendData(session) {
     try {
@@ -105,9 +108,12 @@ async function collectAndSendData(session) {
         const String_LotNo = String.fromCharCode(...Value_AP_LotNo.value.value.filter(code => code !== 0 && code !== 1));
         const String_ETC = String.fromCharCode(...Value_AP_ETC.value.value.filter(code => code !== 0));
 
-        const Value_AP_Com_Req = await session.read({ nodeId: nodeId_APRead_Com_Req, attributeId: AttributeIds.Value });
-        const Value_AP_Len_ProdLen = await session.read({ nodeId: nodeId_APRead_Len_ProdLen, attributeId: AttributeIds.Value });
-        const Value_AP_Len_PressLen = await session.read({ nodeId: nodeId_APRead_Len_PressLen, attributeId: AttributeIds.Value });
+        const Value_AP_Main_Req = await session.read({ nodeId: nodeId_APRead_Main_Req, attributeId: AttributeIds.Value });
+        const Value_AP_Main_ProdLen = await session.read({ nodeId: nodeId_APRead_Main_ProdLen, attributeId: AttributeIds.Value });
+        const Value_AP_Main_PressLen = await session.read({ nodeId: nodeId_APRead_Main_PressLen, attributeId: AttributeIds.Value });
+
+        const Value_AP_Main_LSPSV = await session.read({ nodeId: nodeId_APRead_Main_LSPSV, attributeId: AttributeIds.Value });
+        const Value_AP_Main_LSPPV = await session.read({ nodeId: nodeId_APRead_Main_LSPPV, attributeId: AttributeIds.Value });
 
         let json_AP_UnWinder = {}
         let topic_AP_UnWinder = 'sfs.machine.press.a.uw1';
@@ -128,6 +134,16 @@ async function collectAndSendData(session) {
         json_AP_UnWinder.Diameter.min = 96.6;
         json_AP_UnWinder.Diameter.max = 500.0;
         json_AP_UnWinder.Diameter.value = Value_AP_UnWinder_Diameter.value.value;
+        json_AP_UnWinder.LSPSV = {};
+        json_AP_UnWinder.LSPSV.unit = 'm/min';
+        json_AP_UnWinder.LSPSV.min = 0;
+        json_AP_UnWinder.LSPSV.max = 1000;
+        json_AP_UnWinder.LSPSV.value = Value_AP_Main_LSPSV.value.value;
+        json_AP_UnWinder.LSPPV = {};
+        json_AP_UnWinder.LSPPV.unit = 'm/min';
+        json_AP_UnWinder.LSPPV.min = 0;
+        json_AP_UnWinder.LSPPV.max = 1000;
+        json_AP_UnWinder.LSPPV.value = Value_AP_Main_LSPPV.value.value;
 
         let json_AP_Press = {}
         let topic_AP_Press = 'sfs.machine.press.a.press1';
@@ -292,6 +308,17 @@ async function collectAndSendData(session) {
         json_AP_ReWinder.IHAMode.max = 1;
         json_AP_ReWinder.IHAMode.value = Value_AP_IHA_IHAMode.value.value;
         json_AP_ReWinder.Active = Value_AP_active.value.value;
+
+        json_AP_ReWinder.Len = {};
+        json_AP_ReWinder.Len.ProdLen = Value_AP_Main_ProdLen.value.value;
+        json_AP_ReWinder.Len.PressLen = Value_AP_Main_PressLen.value.value;
+        if(Value_AP_Main_Req === 1){
+            json_AP_ReWinder.Len.Confirm = 1;
+            await writeNode(session, nodeId_APWrite_Main_Rep, DataType.Int16, 1);
+        }else{
+            json_AP_ReWinder.Len.Confirm = 0;
+            await writeNode(session, nodeId_APWrite_Main_Rep, DataType.Int16, 0);
+        }
 
         await sendKafkaMessage(topic_AP_UnWinder, json_AP_UnWinder);
         await sendKafkaMessage(topic_AP_Press, json_AP_Press);

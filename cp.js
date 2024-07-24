@@ -53,13 +53,13 @@ const nodeId_CPRead_IHA_IHAMode = "ns=6;s=::CPRead:ReadData.IHA.IHAMode";
 
 const nodeId_CPRead_active = "ns=6;s=::CPRead:ReadBlock_0.Active";
 
-const nodeId_CPRead_Com_Req = "ns=6;s=::CPRead:ReadData.Main.Req";
-const nodeId_CPRead_Com_Rep = "ns=6;s=::CPWrite:WriteData.Main.Rep";
-const nodeId_CPRead_Len_ProdLen = "ns=6;s=::CPRead:ReadData.Main.ProdLen";
-const nodeId_CPRead_Len_PressLen = "ns=6;s=::CPRead:ReadData.Main.PressLen";
+const nodeId_CPRead_Main_Req = "ns=6;s=::CPRead:ReadData.Main.Req";
+const nodeId_CPWrite_Main_Rep = "ns=6;s=::CPWrite:WriteData.Main.Rep";
+const nodeId_CPRead_Main_ProdLen = "ns=6;s=::CPRead:ReadData.Main.ProdLen";
+const nodeId_CPRead_Main_PressLen = "ns=6;s=::CPRead:ReadData.Main.PressLen";
 
-const nodeId_CPRead_Len_LSPSV = "ns=6;s=::CPRead:ReadData.Main.LSPSV";
-const nodeId_CPRead_Len_LSPPV = "ns=6;s=::CPRead:ReadData.Main.LSPPV";
+const nodeId_CPRead_Main_LSPSV = "ns=6;s=::CPRead:ReadData.Main.LSPSV";
+const nodeId_CPRead_Main_LSPPV = "ns=6;s=::CPRead:ReadData.Main.LSPPV";
 
 async function collectAndSendData(session) {
     try {
@@ -107,12 +107,12 @@ async function collectAndSendData(session) {
         const String_LotNo = String.fromCharCode(...Value_CP_LotNo.value.value.filter(code => code !== 0 && code !== 1));
         const String_ETC = String.fromCharCode(...Value_CP_ETC.value.value.filter(code => code !== 0));
 
-        const Value_CP_Com_Req = await session.read({ nodeId: nodeId_CPRead_Com_Req, attributeId: AttributeIds.Value });
-        const Value_CP_Len_ProdLen = await session.read({ nodeId: nodeId_CPRead_Len_ProdLen, attributeId: AttributeIds.Value });
-        const Value_CP_Len_PressLen = await session.read({ nodeId: nodeId_CPRead_Len_PressLen, attributeId: AttributeIds.Value });
+        const Value_CP_Main_Req = await session.read({ nodeId: nodeId_CPRead_Main_Req, attributeId: AttributeIds.Value });
+        const Value_CP_Main_ProdLen = await session.read({ nodeId: nodeId_CPRead_Main_ProdLen, attributeId: AttributeIds.Value });
+        const Value_CP_Main_PressLen = await session.read({ nodeId: nodeId_CPRead_Main_PressLen, attributeId: AttributeIds.Value });
 
-        const Value_CP_Len_LSPSV = await session.read({ nodeId: nodeId_CPRead_Len_LSPSV, attributeId: AttributeIds.Value });
-        const Value_CP_Len_LSPPV = await session.read({ nodeId: nodeId_CPRead_Len_LSPPV, attributeId: AttributeIds.Value });
+        const Value_CP_Main_LSPSV = await session.read({ nodeId: nodeId_CPRead_Main_LSPSV, attributeId: AttributeIds.Value });
+        const Value_CP_Main_LSPPV = await session.read({ nodeId: nodeId_CPRead_Main_LSPPV, attributeId: AttributeIds.Value });
 
         let json_CP_UnWinder = {}
         let topic_CP_UnWinder = 'sfs.machine.press.c.uw1';
@@ -137,12 +137,12 @@ async function collectAndSendData(session) {
         json_CP_UnWinder.LSPSV.unit = 'm/min';
         json_CP_UnWinder.LSPSV.min = 0;
         json_CP_UnWinder.LSPSV.max = 1000;
-        json_CP_UnWinder.LSPSV.value = Value_CP_Len_LSPSV.value.value;
+        json_CP_UnWinder.LSPSV.value = Value_CP_Main_LSPSV.value.value;
         json_CP_UnWinder.LSPPV = {};
         json_CP_UnWinder.LSPPV.unit = 'm/min';
         json_CP_UnWinder.LSPPV.min = 0;
         json_CP_UnWinder.LSPPV.max = 1000;
-        json_CP_UnWinder.LSPPV.value = Value_CP_Len_LSPPV.value.value;
+        json_CP_UnWinder.LSPPV.value = Value_CP_Main_LSPPV.value.value;
 
         let json_CP_Press = {}
         let topic_CP_Press = 'sfs.machine.press.c.press1';
@@ -307,6 +307,17 @@ async function collectAndSendData(session) {
         json_CP_ReWinder.IHAMode.max = 1;
         json_CP_ReWinder.IHAMode.value = Value_CP_IHA_IHAMode.value.value;
         json_CP_ReWinder.Active = Value_CP_active.value.value;
+
+        json_CP_ReWinder.Len = {};
+        json_CP_ReWinder.Len.ProdLen = Value_CP_Main_ProdLen.value.value;
+        json_CP_ReWinder.Len.PressLen = Value_CP_Main_PressLen.value.value;
+        if(Value_CP_Main_Req === 1){
+            json_CP_ReWinder.Len.Confirm = 1;
+            await writeNode(session, nodeId_CPWrite_Main_Rep, DataType.Int16, 1);
+        }else{
+            json_CP_ReWinder.Len.Confirm = 0;
+            await writeNode(session, nodeId_CPWrite_Main_Rep, DataType.Int16, 0);
+        }
 
         await sendKafkaMessage(topic_CP_UnWinder, json_CP_UnWinder);
         await sendKafkaMessage(topic_CP_Press, json_CP_Press);
