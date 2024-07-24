@@ -73,9 +73,9 @@ async function collectAndSendData(session) {
         const Value_AP_Press_RollBSV = await session.read({ nodeId: nodeId_APRead_Press_RollBSV, attributeId: AttributeIds.Value });
         const Value_AP_Press_RollBPV = await session.read({ nodeId: nodeId_APRead_Press_RollBPV, attributeId: AttributeIds.Value });
         const Value_AP_Press_PreHTSV = await session.read({ nodeId: nodeId_APRead_Press_PreHTSV, attributeId: AttributeIds.Value });
-        const Value_AP_Press_PREHTPV = await session.read({ nodeId: nodeId_APRead_Press_PreHTPV, attributeId: AttributeIds.Value });
-        const Value_AP_Press_PREHBSV = await session.read({ nodeId: nodeId_APRead_Press_PreHBSV, attributeId: AttributeIds.Value });
-        const Value_AP_Press_PREHBPV = await session.read({ nodeId: nodeId_APRead_Press_PreHBPV, attributeId: AttributeIds.Value });
+        const Value_AP_Press_PreHTPV = await session.read({ nodeId: nodeId_APRead_Press_PreHTPV, attributeId: AttributeIds.Value });
+        const Value_AP_Press_PreHBSV = await session.read({ nodeId: nodeId_APRead_Press_PreHBSV, attributeId: AttributeIds.Value });
+        const Value_AP_Press_PreHBPV = await session.read({ nodeId: nodeId_APRead_Press_PreHBPV, attributeId: AttributeIds.Value });
         const Value_AP_Press_SPOS = await session.read({ nodeId: nodeId_APRead_Press_SPOS, attributeId: AttributeIds.Value });
         const Value_AP_Press_SPDS = await session.read({ nodeId: nodeId_APRead_Press_SPDS, attributeId: AttributeIds.Value });
         const Value_AP_Press_HDHOS = await session.read({ nodeId: nodeId_APRead_Press_HDHOS, attributeId: AttributeIds.Value });
@@ -143,6 +143,36 @@ async function collectAndSendData(session) {
         json_AP_Press.RollTPV.min = 0;
         json_AP_Press.RollTPV.max = 200;
         json_AP_Press.RollTPV.value = (Value_AP_Press_RollTPV.value.value * 0.1).toFixed(2) * 1;
+        json_AP_Press.RollBSV = {};
+        json_AP_Press.RollBSV.unit = "°C";
+        json_AP_Press.RollBSV.min = 0;
+        json_AP_Press.RollBSV.max = 200;
+        json_AP_Press.RollBSV.value = (Value_AP_Press_RollBSV.value.value * 0.1).toFixed(2) * 1;
+        json_AP_Press.RollBPV = {};
+        json_AP_Press.RollBPV.unit = "°C";
+        json_AP_Press.RollBPV.min = 0;
+        json_AP_Press.RollBPV.max = 200;
+        json_AP_Press.RollBPV.value = (Value_AP_Press_RollBPV.value.value * 0.1).toFixed(2) * 1;
+        json_AP_Press.PreHTSV = {};
+        json_AP_Press.PreHTSV.unit = "°C";
+        json_AP_Press.PreHTSV.min = 0;
+        json_AP_Press.PreHTSV.max = 200;
+        json_AP_Press.PreHTSV.value = (Value_AP_Press_PreHTSV.value.value * 0.1).toFixed(2) * 1;
+        json_AP_Press.PreHTPV = {};
+        json_AP_Press.PreHTPV.unit = "°C";
+        json_AP_Press.PreHTPV.min = 0;
+        json_AP_Press.PreHTPV.max = 200;
+        json_AP_Press.PreHTPV.value = (Value_AP_Press_PreHTPV.value.value * 0.1).toFixed(2) * 1;
+        json_AP_Press.PreHBSV = {};
+        json_AP_Press.PreHBSV.unit = "°C";
+        json_AP_Press.PreHBSV.min = 0;
+        json_AP_Press.PreHBSV.max = 200;
+        json_AP_Press.PreHBSV.value = (Value_AP_Press_PreHBSV.value.value * 0.1).toFixed(2) * 1;
+        json_AP_Press.PreHBPV = {};
+        json_AP_Press.PreHBPV.unit = "°C";
+        json_AP_Press.PreHBPV.min = 0;
+        json_AP_Press.PreHBPV.max = 200;
+        json_AP_Press.PreHBPV.value = (Value_AP_Press_PreHBPV.value.value * 0.1).toFixed(2) * 1;
         json_AP_Press.SPOS = {};
         json_AP_Press.SPOS.unit = "bar";
         json_AP_Press.SPOS.min = 0;
@@ -198,6 +228,35 @@ async function collectAndSendData(session) {
         json_AP_OutFeed.TSOS.min = 0;
         json_AP_OutFeed.TSOS.max = 250.0;
         json_AP_OutFeed.TSOS.value = (Value_AP_OutFeed_TSOS.value.value * 0.1).toFixed(2) * 1;
+        json_AP_OutFeed.PreHSRSV = {};
+        json_AP_OutFeed.PreHSRSV.unit = "%";
+        json_AP_OutFeed.PreHSRSV.min = 98.00;
+        json_AP_OutFeed.PreHSRSV.max = 102.00;
+        json_AP_OutFeed.PreHSRSV.value = (Value_AP_OutFeed_PreHSRSV.value.value * 0.01).toFixed(2) * 1;
+        json_AP_OutFeed.CoolSRSV = {};
+        json_AP_OutFeed.CoolSRSV.unit = "%";
+        json_AP_OutFeed.CoolSRSV.min = 98.00;
+        json_AP_OutFeed.CoolSRSV.max = 102.00;
+        json_AP_OutFeed.CoolSRSV.value = (Value_AP_OutFeed_CoolSRSV.value.value * 0.01).toFixed(2) * 1;
+        json_AP_OutFeed.CoolTSV = {};
+        json_AP_OutFeed.CoolTSV.unit = "%";
+        json_AP_OutFeed.CoolTSV.min = 0;
+        json_AP_OutFeed.CoolTSV.max = 100.0;
+        json_AP_OutFeed.CoolTSV.value = (Value_AP_OutFeed_CoolTSV.value.value * 0.1).toFixed(2) * 1;
+        json_AP_OutFeed.CoolTPV = {};
+        json_AP_OutFeed.CoolTPV.unit = "%";
+        json_AP_OutFeed.CoolTPV.min = 0;
+        json_AP_OutFeed.CoolTPV.max = 100.0;
+        json_AP_OutFeed.CoolTPV.value = (Value_AP_OutFeed_CoolTPV.value.value * 0.1).toFixed(2) * 1;
+
+        const Value_AP_IHA_DSIHASV2 = new Float32Array(Value_AP_IHA_DSIHASV.value.value.length);
+        for (let i = 0; i < Value_AP_IHA_DSIHASV.value.value.length; i++) {
+            Value_AP_IHA_DSIHASV2[i] = Value_AP_IHA_DSIHASV.value.value[i] / 100;
+        }
+        const Value_AP_IHA_OSIHASV2 = new Float32Array(Value_AP_IHA_OSIHASV.value.value.length);
+        for (let i = 0; i < Value_AP_IHA_OSIHASV.value.value.length; i++) {
+            Value_AP_IHA_OSIHASV2[i] = Value_AP_IHA_OSIHASV.value.value[i] / 100;
+        }
 
         let json_AP_ReWinder = {}
         let topic_AP_ReWinder = 'sfs.machine.press.a.rw1';
@@ -218,15 +277,21 @@ async function collectAndSendData(session) {
         json_AP_ReWinder.Diameter.min = 96.6;
         json_AP_ReWinder.Diameter.max = 500.0;
         json_AP_ReWinder.Diameter.value = Value_AP_ReWinder_Diameter.value.value;
+        json_AP_ReWinder.DSIHASV = {};
+        json_AP_ReWinder.DSIHASV.unit = 'Kw';
+        json_AP_ReWinder.DSIHASV.min = 0;
+        json_AP_ReWinder.DSIHASV.max = 30.00;
+        json_AP_ReWinder.DSIHASV.value = Value_AP_IHA_DSIHASV2;
+        json_AP_ReWinder.OSIHASV = {};
+        json_AP_ReWinder.OSIHASV.unit = 'Kw';
+        json_AP_ReWinder.OSIHASV.min = 0;
+        json_AP_ReWinder.OSIHASV.max = 30.00;
+        json_AP_ReWinder.OSIHASV.value = Value_AP_IHA_OSIHASV2;
+        json_AP_ReWinder.IHAMode = {};
+        json_AP_ReWinder.IHAMode.min = 0;
+        json_AP_ReWinder.IHAMode.max = 1;
+        json_AP_ReWinder.IHAMode.value = Value_AP_IHA_IHAMode.value.value;
         json_AP_ReWinder.Active = Value_AP_active.value.value;
-
-        // console.log(Value_AP_OutFeed_PreHSRSV.value.value);
-        // console.log(Value_AP_OutFeed_CoolSRSV.value.value);
-        // console.log(Value_AP_OutFeed_CoolTSV.value.value);
-        // console.log(Value_AP_OutFeed_CoolTPV.value.value);
-        // console.log(Value_AP_IHA_DSIHASV.value.value);
-        // console.log(Value_AP_IHA_OSIHASV.value.value);
-        // console.log(Value_AP_IHA_IHAMode.value.value);
 
         await sendKafkaMessage(topic_AP_UnWinder, json_AP_UnWinder);
         await sendKafkaMessage(topic_AP_Press, json_AP_Press);

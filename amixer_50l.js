@@ -6,8 +6,8 @@ const redis = require('redis');
 const redis_client = redis.createClient();
 
 const kafka = new Kafka({
-  clientId: 'my-kafka-app',
-  brokers: ['10.10.10.52:9092'] // Kafka 브로커의 주소
+    clientId: 'my-kafka-app',
+    brokers: ['10.10.10.52:9092'] // Kafka 브로커의 주소
 });
 
 const producer = kafka.producer();
@@ -26,6 +26,11 @@ const nodeId_APDRead_PDMixer_MOTSV = "ns=6;s=::APDRead:PDMixer.MOTSV";
 const nodeId_APDRead_PDMixer_MTSV = "ns=6;s=::APDRead:PDMixer.MTSV";
 const nodeId_APDRead_PDMixer_TPV = "ns=6;s=::APDRead:PDMixer.TPV";
 const nodeId_APDRead_PDMixer_Bit2 = "ns=6;s=::APDRead:PDMixer.Bit2";
+
+const nodeId_APDRead_PDMixer_EqStatus = "ns=6;s=::APDRead:PDMixer.EqStatus";
+const nodeId_APDRead_PDMixer_PCStatus = "ns=6;s=::APDRead:PDMixer.PCStatus";
+
+const nodeId_APDRead_active = "ns=6;s=::APDRead:ReadBlock_0.Active";
 
 function decimalToBinary(decimal, numDigits) {
     let binary = '';
@@ -66,7 +71,10 @@ async function collectAndSendData(session, redis_value) {
         const Value_APD_PDMixer_MTSV = await session.read({ nodeId: nodeId_APDRead_PDMixer_MTSV, attributeId: AttributeIds.Value });
         const Value_APD_PDMixer_TPV = await session.read({ nodeId: nodeId_APDRead_PDMixer_TPV, attributeId: AttributeIds.Value });
         const Value_APD_PDMixer_Bit2 = await session.read({ nodeId: nodeId_APDRead_PDMixer_Bit2, attributeId: AttributeIds.Value });
-        
+        const Value_APD_PDMixer_EqStatus = await session.read({ nodeId: nodeId_APDRead_PDMixer_EqStatus, attributeId: AttributeIds.Value });
+        const Value_APD_PDMixer_PCStatus = await session.read({ nodeId: nodeId_APDRead_PDMixer_PCStatus, attributeId: AttributeIds.Value });
+        const Value_APD_active = await session.read({ nodeId: nodeId_APDRead_active, attributeId: AttributeIds.Value });
+
         let json_APD_PDMixer = {}
         let topic_APD_PDMixer = 'sfs.machine.mixer.c.pd1';
         json_APD_PDMixer.BatchID = redis_value;
@@ -117,9 +125,11 @@ async function collectAndSendData(session, redis_value) {
         const APD_PDMixer_Bit2 = binaryDigits(Value_APD_PDMixer_Bit2.value.value, 2);
         json_APD_PDMixer.VOP = APD_PDMixer_Bit2[1];
         json_APD_PDMixer.VE = APD_PDMixer_Bit2[0];
+        json_APD_PDMixer.EqStatus = Value_APD_PDMixer_EqStatus.value.value;
+        json_APD_PDMixer.PCStatus = Value_APD_PDMixer_PCStatus.value.value;
+        json_APD_PDMixer.Active = Value_APD_active.value.value;
         
         await sendKafkaMessage(topic_APD_PDMixer, json_APD_PDMixer);
-        
     } catch (error) {
         console.error('데이터 수집 및 전송 중 오류 발생:', error);
     }
@@ -137,13 +147,9 @@ async function main() {
         const session = await client.createSession();
         console.log("Session created");
 
-        let redis_value = await redis_client.get('cathode_50');
-
-        await collectAndSendData(session, redis_value);
-
         const run = async () => {
             while (true) {
-		redis_value = await redis_client.get('cathode_50');
+                let redis_value = await redis_client.get('cathode_50');
                 await collectAndSendData(session, redis_value);
                 await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
             }

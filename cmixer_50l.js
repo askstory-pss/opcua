@@ -6,8 +6,8 @@ const redis = require('redis');
 const redis_client = redis.createClient();
 
 const kafka = new Kafka({
-  clientId: 'my-kafka-app',
-  brokers: ['10.10.10.52:9092']
+    clientId: 'my-kafka-app',
+    brokers: ['10.10.10.52:9092']
 });
 
 const producer = kafka.producer();
@@ -24,6 +24,9 @@ const nodeId_CPDRead_PDMixer_MOTSV = "ns=6;s=::CPDRead:PDMixer.MOTSV";
 const nodeId_CPDRead_PDMixer_MTSV = "ns=6;s=::CPDRead:PDMixer.MTSV";
 const nodeId_CPDRead_PDMixer_TPV = "ns=6;s=::CPDRead:PDMixer.TPV";
 const nodeId_CPDRead_PDMixer_Bit2 = "ns=6;s=::CPDRead:PDMixer.Bit2";
+
+const nodeId_CPDRead_PDMixer_EqStatus = "ns=6;s=::CPDRead:PDMixer.EqStatus";
+const nodeId_CPDRead_PDMixer_PCStatus = "ns=6;s=::CPDRead:PDMixer.PCStatus";
 
 const nodeId_CPDRead_active = "ns=6;s=::CPDRead:ReadBlock_0.Active";
 
@@ -66,7 +69,8 @@ async function collectAndSendData(session, redis_value) {
         const Value_CPD_PDMixer_MTSV = await session.read({ nodeId: nodeId_CPDRead_PDMixer_MTSV, attributeId: AttributeIds.Value });
         const Value_CPD_PDMixer_TPV = await session.read({ nodeId: nodeId_CPDRead_PDMixer_TPV, attributeId: AttributeIds.Value });
         const Value_CPD_PDMixer_Bit2 = await session.read({ nodeId: nodeId_CPDRead_PDMixer_Bit2, attributeId: AttributeIds.Value });
-        
+        const Value_CPD_PDMixer_EqStatus = await session.read({ nodeId: nodeId_CPDRead_PDMixer_EqStatus, attributeId: AttributeIds.Value });
+        const Value_CPD_PDMixer_PCStatus = await session.read({ nodeId: nodeId_CPDRead_PDMixer_PCStatus, attributeId: AttributeIds.Value });
         const Value_CPD_active = await session.read({ nodeId: nodeId_CPDRead_active, attributeId: AttributeIds.Value });
 
         let json_CPD_PDMixer = {}
@@ -119,6 +123,8 @@ async function collectAndSendData(session, redis_value) {
         const CPD_PDMixer_Bit2 = binaryDigits(Value_CPD_PDMixer_Bit2.value.value, 2);
         json_CPD_PDMixer.VOP = CPD_PDMixer_Bit2[1];
         json_CPD_PDMixer.VE = CPD_PDMixer_Bit2[0];
+        json_CPD_PDMixer.EqStatus = Value_CPD_PDMixer_EqStatus.value.value;
+        json_CPD_PDMixer.PCStatus = Value_CPD_PDMixer_PCStatus.value.value;
         json_CPD_PDMixer.Active = Value_CPD_active.value.value;
 
         await sendKafkaMessage(topic_CPD_PDMixer, json_CPD_PDMixer);
