@@ -78,6 +78,10 @@ async function collectAndSendData(session) {
 
         const Value_CS_active = await session.read({ nodeId: nodeId_CSRead_active, attributeId: AttributeIds.Value });
 
+        const Value_CS_Main_ProdLen = await session.read({ nodeId: nodeId_CSRead_Main_ProdLen, attributeId: AttributeIds.Value });
+        const Value_CS_Main_PressLen = await session.read({ nodeId: nodeId_CSRead_Main_PressLen, attributeId: AttributeIds.Value });
+        const Value_CS_Main_Req = await session.read({ nodeId: nodeId_CSRead_Main_Req, attributeId: AttributeIds.Value });
+
         const String_LotNo = String.fromCharCode(...Value_CS_LotNo.value.value.filter(code => code !== 0));
         const String_ETC = String.fromCharCode(...Value_CS_ETC.value.value.filter(code => code !== 0));
 
@@ -111,6 +115,19 @@ async function collectAndSendData(session) {
         json_CS_UnWinder.LSPPV.min = 0;
         json_CS_UnWinder.LSPPV.max = 1000;
         json_CS_UnWinder.LSPPV.value = Value_CS_Main_LSPPV.value.value;
+        json_CS_UnWinder.Len = {};
+        json_CS_UnWinder.Len.unit = 'm';
+        json_CS_UnWinder.Len.min = 0;
+        json_CS_UnWinder.Len.max = 9000.0;
+        json_CS_UnWinder.Len.ProdLen = (Value_CS_Main_ProdLen.value.value * 0.1).toFixed(2) * 1;
+        json_CS_UnWinder.Len.PressLen = (Value_CS_Main_PressLen.value.value * 0.1).toFixed(2) * 1;
+        if(Value_CS_Main_Req.value.value === 1){
+            json_CS_UnWinder.Len.Confirm = 1;
+            await writeNode(session, nodeId_CSWrite_Main_Rep, DataType.Int16, 1);
+        }else{
+            json_CS_UnWinder.Len.Confirm = 0;
+            await writeNode(session, nodeId_CSWrite_Main_Rep, DataType.Int16, 0);
+        }
 
         let json_CS_Knife = {}
         let topic_CS_Knife = 'sfs.machine.slitting.c.kf1';
@@ -184,17 +201,6 @@ async function collectAndSendData(session) {
         json_CS_ReWinder.DL.max = 500.0;
         json_CS_ReWinder.DL.value = Value_CS_ReWinder_DL.value.value;
         json_CS_ReWinder.Active = Value_CS_active.value.value;
-
-        json_CS_ReWinder.Len = {};
-        json_CS_ReWinder.Len.ProdLen = Value_CS_Main_ProdLen.value.value;
-        json_CS_ReWinder.Len.PressLen = Value_CS_Main_PressLen.value.value;
-        if(Value_CS_Main_Req === 1){
-            json_CS_ReWinder.Len.Confirm = 1;
-            await writeNode(session, nodeId_CSWrite_Main_Rep, DataType.Int16, 1);
-        }else{
-            json_CS_ReWinder.Len.Confirm = 0;
-            await writeNode(session, nodeId_CSWrite_Main_Rep, DataType.Int16, 0);
-        }
 
         await sendKafkaMessage(topic_CS_UnWinder, json_CS_UnWinder);
         await sendKafkaMessage(topic_CS_Knife, json_CS_Knife);

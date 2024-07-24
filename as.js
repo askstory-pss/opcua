@@ -132,6 +132,19 @@ async function collectAndSendData(session) {
         json_AS_UnWinder.LSPPV.min = 0;
         json_AS_UnWinder.LSPPV.max = 1000;
         json_AS_UnWinder.LSPPV.value = Value_AS_Main_LSPPV.value.value;
+        json_AS_UnWinder.Len = {};
+        json_AS_UnWinder.Len.unit = 'm';
+        json_AS_UnWinder.Len.min = 0;
+        json_AS_UnWinder.Len.max = 9000.0;
+        json_AS_UnWinder.Len.ProdLen = (Value_AS_Main_ProdLen.value.value * 0.1).toFixed(2) * 1;
+        json_AS_UnWinder.Len.PressLen = (Value_AS_Main_PressLen.value.value * 0.1).toFixed(2) * 1;
+        if(Value_AS_Main_Req.value.value === 1){
+            json_AS_UnWinder.Len.Confirm = 1;
+            await writeNode(session, nodeId_ASWrite_Main_Rep, DataType.Int16, 1);
+        }else{
+            json_AP_UnWinder.Len.Confirm = 0;
+            await writeNode(session, nodeId_ASWrite_Main_Rep, DataType.Int16, 0);
+        }
 
         let json_AS_Knife = {}
         let topic_AS_Knife = 'sfs.machine.slitting.a.kf1';
@@ -205,17 +218,6 @@ async function collectAndSendData(session) {
         json_AS_ReWinder.DL.max = 500.0;
         json_AS_ReWinder.DL.value = Value_AS_ReWinder_DL.value.value;
         json_AS_ReWinder.Active = Value_AS_active.value.value;
-
-        json_AS_ReWinder.Len = {};
-        json_AS_ReWinder.Len.ProdLen = Value_AS_Main_ProdLen.value.value;
-        json_AS_ReWinder.Len.PressLen = Value_AS_Main_PressLen.value.value;
-        if(Value_AS_Main_Req === 1){
-            json_AS_ReWinder.Len.Confirm = 1;
-            await writeNode(session, nodeId_ASWrite_Main_Rep, DataType.Int16, 1);
-        }else{
-            json_AS_ReWinder.Len.Confirm = 0;
-            await writeNode(session, nodeId_ASWrite_Main_Rep, DataType.Int16, 0);
-        }
 
         await sendKafkaMessage(topic_AS_UnWinder, json_AS_UnWinder);
         await sendKafkaMessage(topic_AS_Knife, json_AS_Knife);

@@ -144,6 +144,19 @@ async function collectAndSendData(session) {
         json_AP_UnWinder.LSPPV.min = 0;
         json_AP_UnWinder.LSPPV.max = 1000;
         json_AP_UnWinder.LSPPV.value = Value_AP_Main_LSPPV.value.value;
+        json_AP_UnWinder.Len = {};
+        json_AP_UnWinder.Len.unit = 'm';
+        json_AP_UnWinder.Len.min = 0;
+        json_AP_UnWinder.Len.max = 9000.0;
+        json_AP_UnWinder.Len.ProdLen = (Value_AP_Main_ProdLen.value.value * 0.1).toFixed(2) * 1;
+        json_AP_UnWinder.Len.PressLen = (Value_AP_Main_PressLen.value.value * 0.1).toFixed(2) * 1;
+        if(Value_AP_Main_Req.value.value === 1){
+            json_AP_UnWinder.Len.Confirm = 1;
+            await writeNode(session, nodeId_APWrite_Main_Rep, DataType.Int16, 1);
+        }else{
+            json_AP_UnWinder.Len.Confirm = 0;
+            await writeNode(session, nodeId_APWrite_Main_Rep, DataType.Int16, 0);
+        }
 
         let json_AP_Press = {}
         let topic_AP_Press = 'sfs.machine.press.a.press1';
@@ -308,17 +321,6 @@ async function collectAndSendData(session) {
         json_AP_ReWinder.IHAMode.max = 1;
         json_AP_ReWinder.IHAMode.value = Value_AP_IHA_IHAMode.value.value;
         json_AP_ReWinder.Active = Value_AP_active.value.value;
-
-        json_AP_ReWinder.Len = {};
-        json_AP_ReWinder.Len.ProdLen = Value_AP_Main_ProdLen.value.value;
-        json_AP_ReWinder.Len.PressLen = Value_AP_Main_PressLen.value.value;
-        if(Value_AP_Main_Req === 1){
-            json_AP_ReWinder.Len.Confirm = 1;
-            await writeNode(session, nodeId_APWrite_Main_Rep, DataType.Int16, 1);
-        }else{
-            json_AP_ReWinder.Len.Confirm = 0;
-            await writeNode(session, nodeId_APWrite_Main_Rep, DataType.Int16, 0);
-        }
 
         await sendKafkaMessage(topic_AP_UnWinder, json_AP_UnWinder);
         await sendKafkaMessage(topic_AP_Press, json_AP_Press);
