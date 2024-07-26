@@ -62,6 +62,23 @@ const nodeId_APRead_Main_PressLen = "ns=6;s=::APRead:ReadData.Main.PressLen";
 const nodeId_APRead_Main_LSPSV = "ns=6;s=::APRead:ReadData.Main.LSPSV";
 const nodeId_APRead_Main_LSPPV = "ns=6;s=::APRead:ReadData.Main.LSPPV";
 
+async function writeNode(session, nodeId, dataType, value) {
+    try {
+        await session.write({
+            nodeId,
+            attributeId: AttributeIds.Value,
+            value: {
+                value: {
+                    dataType,
+                    value
+                }
+            }
+        });
+    } catch (error) {
+        throw error;
+    }
+}
+
 async function collectAndSendData(session) {
     try {
         const Value_AP_LotNo = await session.read({ nodeId: nodeId_APRead_LotNo, attributeId: AttributeIds.Value });
@@ -282,8 +299,8 @@ async function collectAndSendData(session) {
         for (let i = 0; i < Value_AP_IHA_DSIHASV.value.value.length; i++) {
             Value_AP_IHA_DSIHASV2[i] = Value_AP_IHA_DSIHASV.value.value[i] / 100;
         }
-        const Value_AP_IHA_OSIHASV2 = new Float32Array(Value_AP_IHA_OSIHASV.value.value.length);
-        for (let i = 0; i < Value_AP_IHA_OSIHASV.value.value.length; i++) {
+        const Value_AP_IHA_OSIHASV2 = new Float32Array(Value_AP_IHA_OSIHASV.value.value?.length);
+        for (let i = 0; i < Value_AP_IHA_OSIHASV.value.value?.length; i++) {
             Value_AP_IHA_OSIHASV2[i] = Value_AP_IHA_OSIHASV.value.value[i] / 100;
         }
 
