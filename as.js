@@ -142,7 +142,7 @@ async function collectAndSendData(session) {
             json_AS_UnWinder.Len.Confirm = 1;
             await writeNode(session, nodeId_ASWrite_Main_Rep, DataType.Int16, 1);
         }else{
-            json_AP_UnWinder.Len.Confirm = 0;
+            json_AS_UnWinder.Len.Confirm = 0;
             await writeNode(session, nodeId_ASWrite_Main_Rep, DataType.Int16, 0);
         }
 

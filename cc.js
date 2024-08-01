@@ -2,8 +2,8 @@ const { OPCUAClient, AttributeIds, DataType } = require("node-opcua-client");
 const { Kafka } = require('kafkajs');
 
 const kafka = new Kafka({
-  clientId: 'my-kafka-app',
-  brokers: ['10.10.10.52:9092'] // Kafka 브로커의 주소
+    clientId: 'my-kafka-app',
+    brokers: ['10.10.10.52:9092'] // Kafka 브로커의 주소
 });
 
 const producer = kafka.producer();

@@ -46,6 +46,23 @@ const nodeId_CSRead_Main_PressLen = "ns=6;s=::CSRead:ReadData.Main.PressLen";
 const nodeId_CSRead_Main_Req = "ns=6;s=::CSRead:ReadData.Main.Req";
 const nodeId_CSWrite_Main_Rep = "ns=6;s=::CSWrite:WriteData.Main.Rep";
 
+async function writeNode(session, nodeId, dataType, value) {
+    try {
+        await session.write({
+            nodeId,
+            attributeId: AttributeIds.Value,
+            value: {
+                value: {
+                    dataType,
+                    value
+                }
+            }
+        });
+    } catch (error) {
+        throw error;
+    }
+}
+
 async function collectAndSendData(session) {
     try {
         const Value_CS_LotNo = await session.read({ nodeId: nodeId_CSRead_LotNo, attributeId: AttributeIds.Value });
