@@ -8,7 +8,7 @@ const kafka = new Kafka({
 
 const producer = kafka.producer();
 
-// Your OPC UA server endpoint
+// Your OPC UA server endpoint//
 const endpointUrl = "opc.tcp://10.10.10.92:4840";
 
 // The nodeId of the variable you want to read
