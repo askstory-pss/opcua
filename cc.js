@@ -1,6 +1,10 @@
 const { OPCUAClient, AttributeIds, DataType } = require("node-opcua-client");
 const { Kafka } = require('kafkajs');
 
+const redis = require('redis');
+
+const redis_client = redis.createClient();
+
 const kafka = new Kafka({
     clientId: 'my-kafka-app',
     brokers: ['10.10.10.52:9092'] // Kafka 브로커의 주소
@@ -75,7 +79,7 @@ const nodeId_CCRead_Roll_ReLen = "ns=6;s=::CCRead:ReadData.Roll.ReLen";
 
 const nodeId_CCRead_active = "ns=6;s=::CCRead:ReadBlock_0.Active";
 
-async function collectAndSendData(session) {
+async function collectAndSendData(session, redis_value) {
     try {
         const Value_CC_LotNo = await session.read({ nodeId: nodeId_CCRead_LotNo, attributeId: AttributeIds.Value });
         const Value_CC_ETC = await session.read({ nodeId: nodeId_CCRead_ETC, attributeId: AttributeIds.Value });
@@ -356,6 +360,7 @@ async function collectAndSendData(session) {
         json_CC_Status.Start = Value_CC_Status_Start.value.value;
         json_CC_Status.Stop = Value_CC_Status_Stop.value.value;
         json_CC_Status.Error = Value_CC_Status_Error.value.value;
+        json_CC_Status.letter = redis_value;
 
         let json_CC_Density = {}
         let topic_CC_Density = 'sfs.machine.coater.c.dens1'
@@ -402,6 +407,7 @@ async function collectAndSendData(session) {
 
 async function main() {
     await producer.connect();
+    await redis_client.connect();
     const client = OPCUAClient.create({ endpointMustExist: false });
     try{
         await client.connect(endpointUrl);
@@ -410,11 +416,10 @@ async function main() {
         const session = await client.createSession();
         console.log("Session created");
 
-        await collectAndSendData(session);
-
         const run = async () => {
             while (true) {
-                await collectAndSendData(session);
+                let redis_value = await redis_client.get('cathode');
+                await collectAndSendData(session, redis_value);
                 await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
             }
         };
@@ -423,6 +428,7 @@ async function main() {
         console.error("Initialization failed:", error);
         await producer.disconnect();
         await client.disconnect();
+        await redis_client.disconnect();
     }
 }
 
