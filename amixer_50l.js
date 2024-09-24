@@ -29,7 +29,7 @@ const nodeId_APDRead_PDMixer_Bit2 = "ns=6;s=::APDRead:PDMixer.Bit2";
 
 const nodeId_APDRead_PDMixer_EqStatus = "ns=6;s=::APDRead:PDMixer.EqStatus";
 const nodeId_APDRead_PDMixer_PCStatus = "ns=6;s=::APDRead:PDMixer.PCStatus";
-const nodeId_APDRead_PDMixer_EqCM = "ns=6;s=::APDRead:PDMixer.EqCM";
+const nodeId_APDRead_PDMixer_EqCM = "ns=6;s=::APDRead:PDMixer.CMode";
 
 const nodeId_APDRead_active = "ns=6;s=::APDRead:ReadBlock_0.Active";
 

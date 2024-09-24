@@ -27,7 +27,7 @@ const nodeId_CPDRead_PDMixer_Bit2 = "ns=6;s=::CPDRead:PDMixer.Bit2";
 
 const nodeId_CPDRead_PDMixer_EqStatus = "ns=6;s=::CPDRead:PDMixer.EqStatus";
 const nodeId_CPDRead_PDMixer_PCStatus = "ns=6;s=::CPDRead:PDMixer.PCStatus";
-const nodeId_CPDRead_PDMixer_EqCM = "ns=6;s=::CPDRead:PDMixer.EqCM";
+const nodeId_CPDRead_PDMixer_EqCM = "ns=6;s=::CPDRead:PDMixer.CMode";
 
 const nodeId_CPDRead_active = "ns=6;s=::CPDRead:ReadBlock_0.Active";
 

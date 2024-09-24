@@ -24,6 +24,8 @@ const nodeId_AMSRead_MMixer_BatchID = "ns=6;s=::AMSRead:MMixer.BatchID";
 const nodeId_CMSWrite_MMixer_BatchID = "ns=6;s=::CMSWrite:MMixer.BatchID";
 const nodeId_AMSWrite_MMixer_BatchID = "ns=6;s=::AMSWrite:MMixer.BatchID";
 
+const nodeId_APDRead_PDMixer_EqCM = "ns=6;s=::APDRead:PDMixer.CMode";
+
 async function writeNode(session, nodeId, dataType, value) {
     try {
         await session.write({
@@ -43,19 +45,24 @@ async function writeNode(session, nodeId, dataType, value) {
 
 async function collectAndSendData(session) {
     try {
-        const Value_CPDRead_PDMixer_BatchID = await session.read({ nodeId: nodeId_CPDRead_PDMixer_BatchID, attributeId: AttributeIds.Value });
-        const Value_APDRead_PDMixer_BatchID = await session.read({ nodeId: nodeId_APDRead_PDMixer_BatchID, attributeId: AttributeIds.Value });
+        // const Value_CPDRead_PDMixer_BatchID = await session.read({ nodeId: nodeId_CPDRead_PDMixer_BatchID, attributeId: AttributeIds.Value });
+        // const Value_APDRead_PDMixer_BatchID = await session.read({ nodeId: nodeId_APDRead_PDMixer_BatchID, attributeId: AttributeIds.Value });
 
-        const Value_CMSRead_MMixer_BatchID = await session.read({ nodeId: nodeId_CMSRead_MMixer_BatchID, attributeId: AttributeIds.Value });
-        const Value_AMSRead_MMixer_BatchID = await session.read({ nodeId: nodeId_AMSRead_MMixer_BatchID, attributeId: AttributeIds.Value });
+        // const Value_CMSRead_MMixer_BatchID = await session.read({ nodeId: nodeId_CMSRead_MMixer_BatchID, attributeId: AttributeIds.Value });
+        // const Value_AMSRead_MMixer_BatchID = await session.read({ nodeId: nodeId_AMSRead_MMixer_BatchID, attributeId: AttributeIds.Value });
 
         //await writeNode(session, nodeId_CMSWrite_MMixer_BatchID, DataType.String, "BatchIdTest");
         //await writeNode(session, nodeId_AMSWrite_MMixer_BatchID, DataType.String, "BatchIdTest");
 
-        console.log(Value_CPDRead_PDMixer_BatchID.value.value);
-        console.log(Value_APDRead_PDMixer_BatchID.value.value);
-        console.log(Value_CMSRead_MMixer_BatchID.value.value);
-        console.log(Value_AMSRead_MMixer_BatchID.value.value);
+        const Value_APD_PDMixer_EqCM = await session.read({ nodeId: nodeId_APDRead_PDMixer_EqCM, attributeId: AttributeIds.Value });
+
+        // console.log(Value_CPDRead_PDMixer_BatchID.value.value);
+        // console.log(Value_APDRead_PDMixer_BatchID.value.value);
+        // console.log(Value_CMSRead_MMixer_BatchID.value.value);
+        // console.log(Value_AMSRead_MMixer_BatchID.value.value);
+
+        console.log(Value_APD_PDMixer_EqCM.value.value);
+
 
     } catch (error) {
         console.error('데이터 수집 및 전송 중 오류 발생:', error);
