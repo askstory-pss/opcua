@@ -27,6 +27,7 @@ const nodeId_CPDRead_PDMixer_Bit2 = "ns=6;s=::CPDRead:PDMixer.Bit2";
 
 const nodeId_CPDRead_PDMixer_EqStatus = "ns=6;s=::CPDRead:PDMixer.EqStatus";
 const nodeId_CPDRead_PDMixer_PCStatus = "ns=6;s=::CPDRead:PDMixer.PCStatus";
+const nodeId_CPDRead_PDMixer_EqCM = "ns=6;s=::CPDRead:PDMixer.EqCM";
 
 const nodeId_CPDRead_active = "ns=6;s=::CPDRead:ReadBlock_0.Active";
 
@@ -71,12 +72,13 @@ async function collectAndSendData(session, redis_value) {
         const Value_CPD_PDMixer_Bit2 = await session.read({ nodeId: nodeId_CPDRead_PDMixer_Bit2, attributeId: AttributeIds.Value });
         const Value_CPD_PDMixer_EqStatus = await session.read({ nodeId: nodeId_CPDRead_PDMixer_EqStatus, attributeId: AttributeIds.Value });
         const Value_CPD_PDMixer_PCStatus = await session.read({ nodeId: nodeId_CPDRead_PDMixer_PCStatus, attributeId: AttributeIds.Value });
+        const Value_CPD_PDMixer_EqCM = await session.read({ nodeId: nodeId_CPDRead_PDMixer_EqCM, attributeId: AttributeIds.Value });
         const Value_CPD_active = await session.read({ nodeId: nodeId_CPDRead_active, attributeId: AttributeIds.Value });
 
         let json_CPD_PDMixer = {}
         let topic_CPD_PDMixer = 'sfs.machine.mixer.a.pd1';
         json_CPD_PDMixer.BatchID = redis_value;
-	json_CPD_PDMixer.PRPMPV = {}
+        json_CPD_PDMixer.PRPMPV = {}
         json_CPD_PDMixer.PRPMPV.unit = 'RPM';
         json_CPD_PDMixer.PRPMPV.min = 0;
         json_CPD_PDMixer.PRPMPV.max = 40;
@@ -125,6 +127,7 @@ async function collectAndSendData(session, redis_value) {
         json_CPD_PDMixer.VE = CPD_PDMixer_Bit2[0];
         json_CPD_PDMixer.EqStatus = Value_CPD_PDMixer_EqStatus.value.value;
         json_CPD_PDMixer.PCStatus = Value_CPD_PDMixer_PCStatus.value.value;
+        json_CPD_PDMixer.EqCM = Value_CPD_PDMixer_EqCM.value.value;
         json_CPD_PDMixer.Active = Value_CPD_active.value.value;
 
         await sendKafkaMessage(topic_CPD_PDMixer, json_CPD_PDMixer);

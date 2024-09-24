@@ -29,6 +29,7 @@ const nodeId_APDRead_PDMixer_Bit2 = "ns=6;s=::APDRead:PDMixer.Bit2";
 
 const nodeId_APDRead_PDMixer_EqStatus = "ns=6;s=::APDRead:PDMixer.EqStatus";
 const nodeId_APDRead_PDMixer_PCStatus = "ns=6;s=::APDRead:PDMixer.PCStatus";
+const nodeId_APDRead_PDMixer_EqCM = "ns=6;s=::APDRead:PDMixer.EqCM";
 
 const nodeId_APDRead_active = "ns=6;s=::APDRead:ReadBlock_0.Active";
 
@@ -73,6 +74,7 @@ async function collectAndSendData(session, redis_value) {
         const Value_APD_PDMixer_Bit2 = await session.read({ nodeId: nodeId_APDRead_PDMixer_Bit2, attributeId: AttributeIds.Value });
         const Value_APD_PDMixer_EqStatus = await session.read({ nodeId: nodeId_APDRead_PDMixer_EqStatus, attributeId: AttributeIds.Value });
         const Value_APD_PDMixer_PCStatus = await session.read({ nodeId: nodeId_APDRead_PDMixer_PCStatus, attributeId: AttributeIds.Value });
+        const Value_APD_PDMixer_EqCM = await session.read({ nodeId: nodeId_APDRead_PDMixer_EqCM, attributeId: AttributeIds.Value });
         const Value_APD_active = await session.read({ nodeId: nodeId_APDRead_active, attributeId: AttributeIds.Value });
 
         let json_APD_PDMixer = {}
@@ -127,6 +129,7 @@ async function collectAndSendData(session, redis_value) {
         json_APD_PDMixer.VE = APD_PDMixer_Bit2[0];
         json_APD_PDMixer.EqStatus = Value_APD_PDMixer_EqStatus.value.value;
         json_APD_PDMixer.PCStatus = Value_APD_PDMixer_PCStatus.value.value;
+        json_APD_PDMixer.EqCM = Value_APD_PDMixer_EqCM.value.value;
         json_APD_PDMixer.Active = Value_APD_active.value.value;
         
         await sendKafkaMessage(topic_APD_PDMixer, json_APD_PDMixer);
