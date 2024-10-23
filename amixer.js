@@ -379,30 +379,30 @@ async function collectAndSendData(session, redis_value) {
 
         const Value_AP_VC_Bit5 = await session.read({ nodeId: nodeId_APRead_VC_Bit5, attributeId: AttributeIds.Value });
         
-	const Value_AMS_MMBCR_BCR = await session.read({ nodeId: nodeId_AMSRead_MMBCR_BCR, attributeId: AttributeIds.Value });
-	const Value_AMS_MMBCR_REQ = await session.read({ nodeId: nodeId_AMSRead_MMBCR_REQ, attributeId: AttributeIds.Value });
-	const Value_AMS_MMBCR_CODE = await session.read({ nodeId: nodeId_AMSRead_MMBCR_CODE, attributeId: AttributeIds.Value });
-	const Value_AMS_MMBCR_REP = await session.read({ nodeId: nodeId_AMSRead_MMBCR_REP, attributeId: AttributeIds.Value });
+        const Value_AMS_MMBCR_BCR = await session.read({ nodeId: nodeId_AMSRead_MMBCR_BCR, attributeId: AttributeIds.Value });
+        const Value_AMS_MMBCR_REQ = await session.read({ nodeId: nodeId_AMSRead_MMBCR_REQ, attributeId: AttributeIds.Value });
+        const Value_AMS_MMBCR_CODE = await session.read({ nodeId: nodeId_AMSRead_MMBCR_CODE, attributeId: AttributeIds.Value });
+        const Value_AMS_MMBCR_REP = await session.read({ nodeId: nodeId_AMSRead_MMBCR_REP, attributeId: AttributeIds.Value });
 
-	const Value_AMC_CMCBCR_BCR = await session.read({ nodeId: nodeId_AMCRead_CMCBCR_BCR, attributeId: AttributeIds.Value });
-	const Value_AMC_CMCBCR_REQ = await session.read({ nodeId: nodeId_AMCRead_CMCBCR_REQ, attributeId: AttributeIds.Value });
-	const Value_AMC_CMCBCR_CODE = await session.read({ nodeId: nodeId_AMCRead_CMCBCR_CODE, attributeId: AttributeIds.Value });
-	const Value_AMC_CMCBCR_REP = await session.read({ nodeId: nodeId_AMCRead_CMCBCR_REP, attributeId: AttributeIds.Value });
+        const Value_AMC_CMCBCR_BCR = await session.read({ nodeId: nodeId_AMCRead_CMCBCR_BCR, attributeId: AttributeIds.Value });
+        const Value_AMC_CMCBCR_REQ = await session.read({ nodeId: nodeId_AMCRead_CMCBCR_REQ, attributeId: AttributeIds.Value });
+        const Value_AMC_CMCBCR_CODE = await session.read({ nodeId: nodeId_AMCRead_CMCBCR_CODE, attributeId: AttributeIds.Value });
+        const Value_AMC_CMCBCR_REP = await session.read({ nodeId: nodeId_AMCRead_CMCBCR_REP, attributeId: AttributeIds.Value });
 
-	const Value_AP_DP1BCR_BCR = await session.read({ nodeId: nodeId_APRead_DP1BCR_BCR, attributeId: AttributeIds.Value });
-	const Value_AP_DP1BCR_REQ = await session.read({ nodeId: nodeId_APRead_DP1BCR_REQ, attributeId: AttributeIds.Value });
-	const Value_AP_DP1BCR_CODE = await session.read({ nodeId: nodeId_APRead_DP1BCR_CODE, attributeId: AttributeIds.Value });
-	const Value_AP_DP1BCR_REP = await session.read({ nodeId: nodeId_APRead_DP1BCR_REP, attributeId: AttributeIds.Value });
+        const Value_AP_DP1BCR_BCR = await session.read({ nodeId: nodeId_APRead_DP1BCR_BCR, attributeId: AttributeIds.Value });
+        const Value_AP_DP1BCR_REQ = await session.read({ nodeId: nodeId_APRead_DP1BCR_REQ, attributeId: AttributeIds.Value });
+        const Value_AP_DP1BCR_CODE = await session.read({ nodeId: nodeId_APRead_DP1BCR_CODE, attributeId: AttributeIds.Value });
+        const Value_AP_DP1BCR_REP = await session.read({ nodeId: nodeId_APRead_DP1BCR_REP, attributeId: AttributeIds.Value });
 
-	const Value_AP_DP2BCR_BCR = await session.read({ nodeId: nodeId_APRead_DP2BCR_BCR, attributeId: AttributeIds.Value });
-	const Value_AP_DP2BCR_REQ = await session.read({ nodeId: nodeId_APRead_DP2BCR_REQ, attributeId: AttributeIds.Value });
-	const Value_AP_DP2BCR_CODE = await session.read({ nodeId: nodeId_APRead_DP2BCR_CODE, attributeId: AttributeIds.Value });
-	const Value_AP_DP2BCR_REP = await session.read({ nodeId: nodeId_APRead_DP2BCR_REP, attributeId: AttributeIds.Value });
+        const Value_AP_DP2BCR_BCR = await session.read({ nodeId: nodeId_APRead_DP2BCR_BCR, attributeId: AttributeIds.Value });
+        const Value_AP_DP2BCR_REQ = await session.read({ nodeId: nodeId_APRead_DP2BCR_REQ, attributeId: AttributeIds.Value });
+        const Value_AP_DP2BCR_CODE = await session.read({ nodeId: nodeId_APRead_DP2BCR_CODE, attributeId: AttributeIds.Value });
+        const Value_AP_DP2BCR_REP = await session.read({ nodeId: nodeId_APRead_DP2BCR_REP, attributeId: AttributeIds.Value });
 
-	const Value_AP_DPSBCR_BCR = await session.read({ nodeId: nodeId_APRead_DPSBCR_BCR, attributeId: AttributeIds.Value });
-	const Value_AP_DPSBCR_REQ = await session.read({ nodeId: nodeId_APRead_DPSBCR_REQ, attributeId: AttributeIds.Value });
-	const Value_AP_DPSBCR_CODE = await session.read({ nodeId: nodeId_APRead_DPSBCR_CODE, attributeId: AttributeIds.Value });
-	const Value_AP_DPSBCR_REP = await session.read({ nodeId: nodeId_APRead_DPSBCR_REP, attributeId: AttributeIds.Value });
+        const Value_AP_DPSBCR_BCR = await session.read({ nodeId: nodeId_APRead_DPSBCR_BCR, attributeId: AttributeIds.Value });
+        const Value_AP_DPSBCR_REQ = await session.read({ nodeId: nodeId_APRead_DPSBCR_REQ, attributeId: AttributeIds.Value });
+        const Value_AP_DPSBCR_CODE = await session.read({ nodeId: nodeId_APRead_DPSBCR_CODE, attributeId: AttributeIds.Value });
+        const Value_AP_DPSBCR_REP = await session.read({ nodeId: nodeId_APRead_DPSBCR_REP, attributeId: AttributeIds.Value });
 
         let json_ADW_DIWater = {}
         let topic_ADW_DIWater = 'sfs.machine.diw.a.diw1';

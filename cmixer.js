@@ -137,9 +137,9 @@ const nodeId_CPRead_MS2_PWV = "ns=6;s=::CPRead1:MS2.PWV";
 const nodeId_CPRead_MS2_ORPM = "ns=6;s=::CPRead1:MS2.ORPM";
 const nodeId_CPRead_MS2_Bit5 = "ns=6;s=::CPRead1:MS2.Bit5";
 
-const nodeId_CPRead_LS_PWV = "ns=6;s=::CPRead1:LS.PWV";
-const nodeId_CPRead_LS_ORPM = "ns=6;s=::CPRead1:LS.ORPM";
-const nodeId_CPRead_LS_Bit5 = "ns=6;s=::CPRead1:LS.Bit5";
+const nodeId_CPRead_LS_PWV = "ns=6;s=::CPRead1:SS.PWV";
+const nodeId_CPRead_LS_ORPM = "ns=6;s=::CPRead1:SS.ORPM";
+const nodeId_CPRead_LS_Bit5 = "ns=6;s=::CPRead1:SS.Bit5";
 
 const nodeId_CPRead_MDis_PWV = "ns=6;s=::CPRead2:MDis.PWV";
 const nodeId_CPRead_MDis_ORPM = "ns=6;s=::CPRead2:MDis.ORPM";
@@ -381,37 +381,37 @@ async function collectAndSendData(session, redis_value) {
 
         const Value_CP_VC_Bit5 = await session.read({ nodeId: nodeId_CPRead_VC_Bit5, attributeId: AttributeIds.Value });
         
-	const Value_CP_active = await session.read({ nodeId: nodeId_CPRead_active, attributeId: AttributeIds.Value });
+        const Value_CP_active = await session.read({ nodeId: nodeId_CPRead_active, attributeId: AttributeIds.Value });
 
-	const Value_CMS_MMBCR_BCR = await session.read({ nodeId: nodeId_CMSRead_MMBCR_BCR, attributeId: AttributeIds.Value });
-	const Value_CMS_MMBCR_REQ = await session.read({ nodeId: nodeId_CMSRead_MMBCR_REQ, attributeId: AttributeIds.Value });
-	const Value_CMS_MMBCR_CODE = await session.read({ nodeId: nodeId_CMSRead_MMBCR_CODE, attributeId: AttributeIds.Value });
-	const Value_CMS_MMBCR_REP = await session.read({ nodeId: nodeId_CMSRead_MMBCR_REP, attributeId: AttributeIds.Value });
+        const Value_CMS_MMBCR_BCR = await session.read({ nodeId: nodeId_CMSRead_MMBCR_BCR, attributeId: AttributeIds.Value });
+        const Value_CMS_MMBCR_REQ = await session.read({ nodeId: nodeId_CMSRead_MMBCR_REQ, attributeId: AttributeIds.Value });
+        const Value_CMS_MMBCR_CODE = await session.read({ nodeId: nodeId_CMSRead_MMBCR_CODE, attributeId: AttributeIds.Value });
+        const Value_CMS_MMBCR_REP = await session.read({ nodeId: nodeId_CMSRead_MMBCR_REP, attributeId: AttributeIds.Value });
 
-	const Value_CBC_BINBCR_BCR = await session.read({ nodeId: nodeId_CBCRead_BINBCR_BCR, attributeId: AttributeIds.Value });
-	const Value_CBC_BINBCR_REQ = await session.read({ nodeId: nodeId_CBCRead_BINBCR_REQ, attributeId: AttributeIds.Value });
-	const Value_CBC_BINBCR_CODE = await session.read({ nodeId: nodeId_CBCRead_BINBCR_CODE, attributeId: AttributeIds.Value });
-	const Value_CBC_BINBCR_REP = await session.read({ nodeId: nodeId_CBCRead_BINBCR_REP, attributeId: AttributeIds.Value });
+        const Value_CBC_BINBCR_BCR = await session.read({ nodeId: nodeId_CBCRead_BINBCR_BCR, attributeId: AttributeIds.Value });
+        const Value_CBC_BINBCR_REQ = await session.read({ nodeId: nodeId_CBCRead_BINBCR_REQ, attributeId: AttributeIds.Value });
+        const Value_CBC_BINBCR_CODE = await session.read({ nodeId: nodeId_CBCRead_BINBCR_CODE, attributeId: AttributeIds.Value });
+        const Value_CBC_BINBCR_REP = await session.read({ nodeId: nodeId_CBCRead_BINBCR_REP, attributeId: AttributeIds.Value });
 
-	const Value_CP_DP1BCR_BCR = await session.read({ nodeId: nodeId_CPRead_DP1BCR_BCR, attributeId: AttributeIds.Value });
-	const Value_CP_DP1BCR_REQ = await session.read({ nodeId: nodeId_CPRead_DP1BCR_REQ, attributeId: AttributeIds.Value });
-	const Value_CP_DP1BCR_CODE = await session.read({ nodeId: nodeId_CPRead_DP1BCR_CODE, attributeId: AttributeIds.Value });
-	const Value_CP_DP1BCR_REP = await session.read({ nodeId: nodeId_CPRead_DP1BCR_REP, attributeId: AttributeIds.Value });
+        const Value_CP_DP1BCR_BCR = await session.read({ nodeId: nodeId_CPRead_DP1BCR_BCR, attributeId: AttributeIds.Value });
+        const Value_CP_DP1BCR_REQ = await session.read({ nodeId: nodeId_CPRead_DP1BCR_REQ, attributeId: AttributeIds.Value });
+        const Value_CP_DP1BCR_CODE = await session.read({ nodeId: nodeId_CPRead_DP1BCR_CODE, attributeId: AttributeIds.Value });
+        const Value_CP_DP1BCR_REP = await session.read({ nodeId: nodeId_CPRead_DP1BCR_REP, attributeId: AttributeIds.Value });
 
-	const Value_CP_DP2BCR_BCR = await session.read({ nodeId: nodeId_CPRead_DP2BCR_BCR, attributeId: AttributeIds.Value });
-	const Value_CP_DP2BCR_REQ = await session.read({ nodeId: nodeId_CPRead_DP2BCR_REQ, attributeId: AttributeIds.Value });
-	const Value_CP_DP2BCR_CODE = await session.read({ nodeId: nodeId_CPRead_DP2BCR_CODE, attributeId: AttributeIds.Value });
-	const Value_CP_DP2BCR_REP = await session.read({ nodeId: nodeId_CPRead_DP2BCR_REP, attributeId: AttributeIds.Value });
+        const Value_CP_DP2BCR_BCR = await session.read({ nodeId: nodeId_CPRead_DP2BCR_BCR, attributeId: AttributeIds.Value });
+        const Value_CP_DP2BCR_REQ = await session.read({ nodeId: nodeId_CPRead_DP2BCR_REQ, attributeId: AttributeIds.Value });
+        const Value_CP_DP2BCR_CODE = await session.read({ nodeId: nodeId_CPRead_DP2BCR_CODE, attributeId: AttributeIds.Value });
+        const Value_CP_DP2BCR_REP = await session.read({ nodeId: nodeId_CPRead_DP2BCR_REP, attributeId: AttributeIds.Value });
 
-	const Value_CP_DPLBCR_BCR = await session.read({ nodeId: nodeId_CPRead_DPLBCR_BCR, attributeId: AttributeIds.Value });
-	const Value_CP_DPLBCR_REQ = await session.read({ nodeId: nodeId_CPRead_DPLBCR_REQ, attributeId: AttributeIds.Value });
-	const Value_CP_DPLBCR_CODE = await session.read({ nodeId: nodeId_CPRead_DPLBCR_CODE, attributeId: AttributeIds.Value });
-	const Value_CP_DPLBCR_REP = await session.read({ nodeId: nodeId_CPRead_DPLBCR_REP, attributeId: AttributeIds.Value });
+        const Value_CP_DPLBCR_BCR = await session.read({ nodeId: nodeId_CPRead_DPLBCR_BCR, attributeId: AttributeIds.Value });
+        const Value_CP_DPLBCR_REQ = await session.read({ nodeId: nodeId_CPRead_DPLBCR_REQ, attributeId: AttributeIds.Value });
+        const Value_CP_DPLBCR_CODE = await session.read({ nodeId: nodeId_CPRead_DPLBCR_CODE, attributeId: AttributeIds.Value });
+        const Value_CP_DPLBCR_REP = await session.read({ nodeId: nodeId_CPRead_DPLBCR_REP, attributeId: AttributeIds.Value });
 
 
         let json_CNMP_NMP = {}
         let topic_CNMP_NMP = 'sfs.machine.nmp.c.nmp1';
-	json_CNMP_NMP.BatchID = redis_value;
+        json_CNMP_NMP.BatchID = redis_value;
         json_CNMP_NMP.EqStatus = {}
         json_CNMP_NMP.EqStatus.min = 0;
         json_CNMP_NMP.EqStatus.max = 9;

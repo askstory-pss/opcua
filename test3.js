@@ -26,6 +26,8 @@ const nodeId_AMSWrite_MMixer_BatchID = "ns=6;s=::AMSWrite:MMixer.BatchID";
 
 const nodeId_APDRead_PDMixer_EqCM = "ns=6;s=::APDRead:PDMixer.CMode";
 
+const nodeId_CPRead_LS_PWV = "ns=6;s=::CPRead1:SS.PWV";
+
 async function writeNode(session, nodeId, dataType, value) {
     try {
         await session.write({
@@ -56,12 +58,14 @@ async function collectAndSendData(session) {
 
         const Value_APD_PDMixer_EqCM = await session.read({ nodeId: nodeId_APDRead_PDMixer_EqCM, attributeId: AttributeIds.Value });
 
+        const Value_CP_LS_PWV = await session.read({ nodeId: nodeId_CPRead_LS_PWV, attributeId: AttributeIds.Value });
+
         // console.log(Value_CPDRead_PDMixer_BatchID.value.value);
         // console.log(Value_APDRead_PDMixer_BatchID.value.value);
         // console.log(Value_CMSRead_MMixer_BatchID.value.value);
         // console.log(Value_AMSRead_MMixer_BatchID.value.value);
 
-        console.log(Value_APD_PDMixer_EqCM.value.value);
+        console.log(Value_CP_LS_PWV);
 
 
     } catch (error) {
