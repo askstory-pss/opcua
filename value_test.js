@@ -28,33 +28,6 @@ const nodeId_APDRead_PDMixer_PCStatus = "ns=6;s=::APDRead:PDMixer.PCStatus";
 
 const nodeId_APDRead_active = "ns=6;s=::APDRead:ReadBlock_0.Active";
 
-function decimalToBinary(decimal, numDigits) {
-    let binary = '';
-    let num = decimal;
-
-    while (num > 0) {
-        binary = (num & 1) + binary;
-        num >>= 1;
-    }
-
-    while (binary.length < numDigits) {
-        binary = '0' + binary;
-    }
-
-    return binary;
-}
-
-function binaryDigits(decimal, numDigits) {
-    const binary = decimalToBinary(decimal, numDigits);
-    const digits = [];
-
-    for (let i = 0; i < binary.length; i++) {
-        digits.push(Number(binary.charAt(i)));
-    }
-
-    return digits;
-}
-
 async function collectAndSendData(session, redis_value) {
     try {
         const Value_APD_PDMixer_PRPMPV = await session.read({ nodeId: nodeId_APDRead_PDMixer_PRPMPV, attributeId: AttributeIds.Value });
@@ -71,61 +44,7 @@ async function collectAndSendData(session, redis_value) {
         const Value_APD_PDMixer_PCStatus = await session.read({ nodeId: nodeId_APDRead_PDMixer_PCStatus, attributeId: AttributeIds.Value });
         const Value_APD_active = await session.read({ nodeId: nodeId_APDRead_active, attributeId: AttributeIds.Value });
 
-        let json_APD_PDMixer = {}
-        let topic_APD_PDMixer = 'sfs.machine.mixer.c.pd1';
-        json_APD_PDMixer.BatchID = redis_value;
-        json_APD_PDMixer.PRPMPV = {}
-        json_APD_PDMixer.PRPMPV.unit = 'RPM';
-        json_APD_PDMixer.PRPMPV.min = 0;
-        json_APD_PDMixer.PRPMPV.max = 40;
-        json_APD_PDMixer.PRPMPV.value = Value_APD_PDMixer_PRPMPV.value.value;
-        json_APD_PDMixer.PCPV = {}
-        json_APD_PDMixer.PCPV.unit = "Amp";
-        json_APD_PDMixer.PCPV.min = 0.0;
-        json_APD_PDMixer.PCPV.max = 15.0;
-        json_APD_PDMixer.PCPV.value = (Value_APD_PDMixer_PCPV.value.value * 0.1).toFixed(1) * 1;
-        json_APD_PDMixer.DRPMPV = {}
-        json_APD_PDMixer.DRPMPV.unit = "RPM";
-        json_APD_PDMixer.DRPMPV.min = 0;
-        json_APD_PDMixer.DRPMPV.max = 3000;
-        json_APD_PDMixer.DRPMPV.value = Value_APD_PDMixer_DRPMPV.value.value;
-        json_APD_PDMixer.DCPV = {}
-        json_APD_PDMixer.DCPV.unit = "Amp";
-        json_APD_PDMixer.DCPV.min = 0.0;
-        json_APD_PDMixer.DCPV.max = 15.0;
-        json_APD_PDMixer.DCPV.value = (Value_APD_PDMixer_DCPV.value.value * 0.1).toFixed(1) * 1;
-        json_APD_PDMixer.PASNo = {}
-        json_APD_PDMixer.PASNo.min = 0;
-        json_APD_PDMixer.PASNo.max = 10;
-        json_APD_PDMixer.PASNo.value = Value_APD_PDMixer_PASNo.value.value;
-        json_APD_PDMixer.MTimeSV = {}
-        json_APD_PDMixer.MTimeSV.unit = "Min";
-        json_APD_PDMixer.MTimeSV.min = 0;
-        json_APD_PDMixer.MTimeSV.max = 99;
-        json_APD_PDMixer.MTimeSV.value = Value_APD_PDMixer_MTimeSV.value.value;
-        json_APD_PDMixer.MOTSV = {}
-        json_APD_PDMixer.MOTSV.unit = "Min";
-        json_APD_PDMixer.MOTSV.min = 0;
-        json_APD_PDMixer.MOTSV.max = 99;
-        json_APD_PDMixer.MOTSV.value = Value_APD_PDMixer_MOTSV.value.value;
-        json_APD_PDMixer.MTSV = {}
-        json_APD_PDMixer.MTSV.unit = "°C";
-        json_APD_PDMixer.MTSV.min = 0.0;
-        json_APD_PDMixer.MTSV.max = 200.0;
-        json_APD_PDMixer.MTSV.value = (Value_APD_PDMixer_MTSV.value.value * 0.1).toFixed(1) * 1;
-        json_APD_PDMixer.TPV = {}
-        json_APD_PDMixer.TPV.unit = "°C";
-        json_APD_PDMixer.TPV.min = 0.0;
-        json_APD_PDMixer.TPV.max = 200.0;
-        json_APD_PDMixer.TPV.value = (Value_APD_PDMixer_TPV.value.value * 0.1).toFixed(1) * 1;
-        const APD_PDMixer_Bit2 = binaryDigits(Value_APD_PDMixer_Bit2.value.value, 2);
-        json_APD_PDMixer.VOP = APD_PDMixer_Bit2[1];
-        json_APD_PDMixer.VE = APD_PDMixer_Bit2[0];
-        json_APD_PDMixer.EqStatus = Value_APD_PDMixer_EqStatus.value.value;
-        json_APD_PDMixer.PCStatus = Value_APD_PDMixer_PCStatus.value.value;
-        json_APD_PDMixer.Active = Value_APD_active.value.value;
         
-        console.log(Value_APD_PDMixer_TPV.value.value);
     } catch (error) {
         console.error('데이터 수집 및 전송 중 오류 발생:', error);
     }
