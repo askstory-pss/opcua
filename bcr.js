@@ -227,6 +227,9 @@ async function bcrCheck(session, BCR, REQ, CODE, REP, polarity, process, key){
         if(REQ.value.value === 1){
             let resultValue = await bcrAvail(polarity, process, BCR.value.value);
             //let resultValue = true;
+            console.log(polarity);
+            console.log(process);
+            console.log(BCR.value.value);
             const codeValue = resultValue === true ? 1 : 0;
             await writeNode(session, CODE, DataType.Int16, codeValue);
             if (resultValue === true) {
