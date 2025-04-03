@@ -225,8 +225,8 @@ async function writeRedis(key, redis_value){
 async function bcrCheck(session, BCR, REQ, CODE, REP, polarity, process, key){
     try {
         if(REQ.value.value === 1){
-            let resultValue = await bcrAvail(polarity, process, BCR.value.value);
-            //let resultValue = true;
+            //let resultValue = await bcrAvail(polarity, process, BCR.value.value);
+            let resultValue = true;
             console.log(polarity);
             console.log(process);
             console.log(BCR.value.value);
